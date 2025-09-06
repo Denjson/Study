@@ -41,12 +41,12 @@ public class Task2 {
 
 	}
 	
-	private static void statistic1 (List<Order> allOrders) {							// List of unique cities where orders came from
+	static void statistic1 (List<Order> allOrders) {							// List of unique cities where orders came from
 		System.out.println("List of unique cities where orders came from:");
 		allOrders.stream().map(Order::getCity).distinct().sorted().forEach(System.out::println);
 	}
 	
-	private static void statistic2(List<Order> allOrders) {								// Total income for all completed orders
+	static void statistic2(List<Order> allOrders) {								// Total income for all completed orders
 		 double totalRevenue = allOrders.stream()
 				 .filter(st -> st.getStatus().equals(OrderStatus.DELIVERED))			// selecting only delivered orders
 				 .mapToDouble(Order::getIncomeOrder)
@@ -55,7 +55,7 @@ public class Task2 {
 		
 	}
 
-	private static void statistic3(List<Order> allOrders) {								// The most popular product by sales
+	static void statistic3(List<Order> allOrders) {								// The most popular product by sales
 		 System.out.println("\nThe most popular products by sales are (Descending order):");
 		 Stream<OrderItem> flattenedStream = allOrders.stream()
 				 .map(Order::getItems)
@@ -83,7 +83,7 @@ public class Task2 {
 		
 	}
 	
-	private static void statistic4(List<Order> allOrders) {								// Average check for successfully delivered orders 
+	static void statistic4(List<Order> allOrders) {								// Average check for successfully delivered orders 
 		 double totalRevenue = allOrders.stream()
 				 .filter(st -> st.getStatus().equals(OrderStatus.DELIVERED))			// selecting only delivered orders
 				 .mapToDouble(Order::getIncomeOrder)
@@ -96,7 +96,7 @@ public class Task2 {
 		
 	}
 	
-	private static void statistic5(List<Order> allOrders) {								// Customers who have more than 5 orders
+	static void statistic5(List<Order> allOrders) {								// Customers who have more than 5 orders
 		 System.out.println("\nCustomers who have more than 5 orders:");
 		 
 		 allOrders.stream()
