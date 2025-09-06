@@ -20,8 +20,8 @@ class Order {
 		this.orderDate = Generators.timeGenerator();
 		this.customer = new Customer(all);
 		Random random = new Random();
-	    int goodsQ = 1 + random.nextInt(7);				// quantity of goods in one order
-     	for (int i = 0; i<goodsQ; i++) {				// filling collection with goods
+	    int goodsQ = 1 + random.nextInt(7);				// quantity of Items in one order
+     	for (int i = 0; i<goodsQ; i++) {				// filling collection with Items
 			OrderItem item = new OrderItem();
 			this.items.add(item);
 //			System.out.println("Item no " + i);

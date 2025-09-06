@@ -42,7 +42,7 @@ public class Task2 {
 	}
 	
 	static void statistic1 (List<Order> allOrders) {							// List of unique cities where orders came from
-		System.out.println("List of unique cities where orders came from:");
+		System.out.println("1. List of unique cities where orders came from:");
 		allOrders.stream().map(Order::getCity).distinct().sorted().forEach(System.out::println);
 	}
 	
@@ -51,12 +51,12 @@ public class Task2 {
 				 .filter(st -> st.getStatus().equals(OrderStatus.DELIVERED))			// selecting only delivered orders
 				 .mapToDouble(Order::getIncomeOrder)
 				 .sum();
-		 System.out.println("\nTotal income of delivered orders: " + Math.round(100*totalRevenue)/100.00 + " $");
+		 System.out.println("\n2. Total income of delivered orders: " + Math.round(100*totalRevenue)/100.00 + " $");
 		
 	}
 
 	static void statistic3(List<Order> allOrders) {								// The most popular product by sales
-		 System.out.println("\nThe most popular products by sales are (Descending order):");
+		 System.out.println("\n3.1 The most popular products by sales are (Descending order):");
 		 Stream<OrderItem> flattenedStream = allOrders.stream()
 				 .map(Order::getItems)
 				 .flatMap(Collection::stream);											// getting all orders in one stream
@@ -79,7 +79,7 @@ public class Task2 {
 		        Optional<Map.Entry<String, Integer>> first = bestProduct.entrySet()
 		                .stream()
 		                .sorted(Entry.<String, Integer>comparingByValue().reversed()).findFirst();
-		        System.out.println("The most popular product by sales is:\n" + first.get());
+		        System.out.println("3.2 The most popular product by sales is:\n" + first.get());
 		
 	}
 	
@@ -92,19 +92,19 @@ public class Task2 {
 				 .filter(st -> st.getStatus().equals(OrderStatus.DELIVERED))			// selecting only delivered orders
 				 .count()																// counting delivered cases
 				 ;
-		 System.out.println("\nAverage check for successfully delivered orders: " + Math.round(100*totalRevenue/happyCustomers)/100.00 + " $");
+		 System.out.println("\4. nAverage check for successfully delivered orders: " + Math.round(100*totalRevenue/happyCustomers)/100.00 + " $");
 		
 	}
 	
 	static void statistic5(List<Order> allOrders) {								// Customers who have more than 5 orders
-		 System.out.println("\nCustomers who have more than 5 orders:");
+		 System.out.println("\n5.1 Customers who have more than 5 orders:");
 		 
 		 allOrders.stream()
 		 .filter(st -> st.getStatus().equals(OrderStatus.DELIVERED))
 		 .filter(st -> st.getItems().size()>5)
 		 .forEach(System.out::println);
 		 
-		 System.out.println("\nCustomers who have more than 5 orders (only names):");
+		 System.out.println("\n5.2 Customers who have more than 5 orders (only names):");
 		 allOrders.stream()
 		 .filter(st -> st.getStatus().equals(OrderStatus.DELIVERED))
 		 .filter(st -> st.getItems().size()>5)

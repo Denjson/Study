@@ -25,7 +25,7 @@ public class Generators {
 	
 	public static ArrayList<People> generate() throws IOException {
 		ArrayList<People> allPeople = new ArrayList<>();
-		System.out.println("Please wait for 5 seconds while getting data from external source...");
+		System.out.println("Please wait for 5 seconds while getting data from external source (on-line shop)...");
 		try {
 			List<String> names = new ArrayList<String>();
 			List<String> surnames = new ArrayList<String>();
