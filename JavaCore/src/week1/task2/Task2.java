@@ -17,7 +17,7 @@ import week1.task2.res.People;
 public class Task2 {
 
 	public static void main(String[] args) throws IOException {
-		ArrayList<People> all = Generators.generate();							// external data generator of names, cities, etc.
+		ArrayList<People> all = Generators.generate();							// external data generator of names, cities, etc. (feed from on-line shop)
 		System.out.println("External data received successfully.");	 
 		System.out.println("List of orders received from on-line shop:");
 		
