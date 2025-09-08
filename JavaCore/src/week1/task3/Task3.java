@@ -2,17 +2,18 @@ package week1.task3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
+//import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Task3 {
 
 	public volatile static List<Components> robotComponents; // list of required components for one robot
 
-	public static CopyOnWriteArrayList<Components> producedComponents = new CopyOnWriteArrayList<>();
-//	public static List<Components> producedComponents = Collections.synchronizedList(new ArrayList<>());
-//	public static List<Components> producedComponents = new ArrayList<>();				// list of 10 manufactured components
+//	public static CopyOnWriteArrayList<Components> producedComponents = new CopyOnWriteArrayList<>();
+	public static List<Components> producedComponents = Collections.synchronizedList(new ArrayList<>());
+//	public static List<Components> producedComponents = new ArrayList<>();				// shared collection, list of 10 manufactured components
 	static volatile int robotsQ = 100; // required quantity of robots
 	public static boolean ready = false; // ready to collect the components from the factory
 	public static boolean victory = false; // victory condition to stop the factory and competitors
@@ -34,7 +35,7 @@ public class Task3 {
 		return producedComponents.indexOf(part);
 	}
 
-	public static synchronized CopyOnWriteArrayList<Components> printProducedComponents() {
+	public static synchronized List<Components> printProducedComponents() {
 		return producedComponents;
 	}
 
@@ -63,9 +64,9 @@ public class Task3 {
 		Thread thread2 = new Thread(new World());
 		Thread thread3 = new Thread(new Wednesday());
 		thread1.start();
-		Thread.sleep(100);
+		Thread.sleep(200);
 		thread2.start();
-		Thread.sleep(100);
+//		Thread.sleep(100);
 		thread3.start();
 	}
 }
@@ -79,7 +80,7 @@ class Factory implements Runnable {
 		while (!Task3.getVictory()) { // stop factory when victory is achieved
 			counter++;
 			try { // waiting till the end of a day
-				Thread.sleep(50);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -147,7 +148,7 @@ class World implements Runnable {
 						"World - Not all components available, waiting for the next day. Available components: "
 								+ producingRobots);
 				try { // waiting till the end of a day
-					Thread.sleep(20);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -200,7 +201,7 @@ class Wednesday implements Runnable {
 						"Wednesday - Not all components available, waiting for the next day. Available components: "
 								+ producingRobots);
 				try { // waiting till the end of a day
-					Thread.sleep(20);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -232,3 +233,24 @@ enum Components {
 	}
 
 }
+
+
+
+
+
+
+//Each faction is trying to create an army of robots, but to do so they need parts for the robots.
+//Robot parts are divided into: head, torso, hand, feet.
+//They are produced by a neutral Factory, which produces no more than 10 parts every day.
+//The type of parts is chosen randomly.
+//At night, the factions go to the Factory to get parts for the robots (each faction can carry no more than 5 parts).
+//There are two factions: World and Wednesday and neutral object - Factory.
+//The factions and the factory each work in their own thread.
+//Determine who will have the strongest army after 100 days.
+
+
+
+
+
+
+
