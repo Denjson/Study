@@ -1,103 +1,165 @@
 package week1.task1;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
-import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class SafeLinkedListTest {
 
-	@Test
-	void testSize() {
-		LinkedList<Integer> template = new LinkedList<>();
-		SafeLinkedList<Integer> myList = new SafeLinkedList<>();
-		template.add(34);
-		template.add(12);
-		template.add(3);
+  private SafeLinkedList<Integer> list;
 
-		for (Integer i : template)
-			myList.add(i);
-		Assertions.assertEquals(template.size(), myList.size());
-	}
+  @BeforeEach
+  void setUp() {
+    list = new SafeLinkedList<>();
+  }
 
-	@Test
-	void testAddFirstT() {
-		LinkedList<Integer> template = new LinkedList<>();
-		template.add(1);
-		template.add(2);
-		template.add(3);
-		SafeLinkedList<Integer> myList = new SafeLinkedList<>();
-		myList.addFirst(3);
-		myList.addFirst(2);
-		myList.addFirst(1);
-		Assertions.assertEquals(template, myList);
-	}
+  @Test
+  @DisplayName("The size of an empty list must be 0")
+  void testEmptyListSize() {
+    assertEquals(0, list.size());
+  }
 
-	@Test
-	void testAddLastT() {
-		LinkedList<Integer> template = new LinkedList<>();
-		template.add(1);
-		template.add(2);
-		template.add(3);
-		SafeLinkedList<Integer> myList = new SafeLinkedList<>();
-		myList.addLast(1);
-		myList.addLast(2);
-		myList.addLast(3);
-		Assertions.assertEquals(template, myList);
-	}
+  @Test
+  @DisplayName("Getting the first element from an empty list should throw an exception")
+  void testGetFromEmptyList() {
+    assertThrows(NoSuchElementException.class, () -> list.getFirst());
+    assertThrows(NoSuchElementException.class, () -> list.getLast());
+  }
 
-	@Test
-	void testAddIntT() {
-		SafeLinkedList<Integer> myList = new SafeLinkedList<>();
-		myList.add(0,1);
-		myList.add(1,5);
-		myList.add(2,10);
-		Assertions.assertDoesNotThrow(()->myList.add(100,10));
+  @Test
+  @DisplayName("Removing from an empty list should throw an exception")
+  void testRemoveFromEmptyList() {
+    assertThrows(NoSuchElementException.class, () -> list.removeFirst());
+    assertThrows(NoSuchElementException.class, () -> list.removeLast());
+  }
 
-	}
+  @Test
+  @DisplayName("Adding to the beginning should increase the size")
+  void testAddFirstIncreasesSize() {
+    list.addFirst(10);
+    assertEquals(1, list.size());
+  }
 
-	@Test
-	void testGetFirst() {
-		SafeLinkedList<Integer> myList = new SafeLinkedList<>();
-		Assertions.assertDoesNotThrow(()->myList.getFirst());
-	}
+  @ParameterizedTest
+  @ValueSource(ints = {1, 2, 3, 4, 5})
+  @DisplayName("Adding elements multiple times")
+  void testMultipleAdditions(int count) {
+    for (int i = 0; i < count; i++) {
+      list.addLast(i);
+    }
+    assertEquals(count, list.size());
+  }
 
-	@Test
-	void testGetLast() {
-		SafeLinkedList<Integer> myList = new SafeLinkedList<>();
-		Assertions.assertDoesNotThrow(()->myList.getLast());
-	}
+  @Test
+  @DisplayName("Adding by index")
+  void testAddAtIndexMiddle() {
+    list.addLast(1);
+    list.addLast(3);
+    list.add(1, 2);
+    assertEquals(3, list.size());
+    assertEquals(Integer.valueOf(1), list.get(0));
+    assertEquals(Integer.valueOf(2), list.get(1));
+    assertEquals(Integer.valueOf(3), list.get(2));
+  }
 
-	@Test
-	void testGetInt() {
-		SafeLinkedList<Integer> myList = new SafeLinkedList<>();
-		myList.add(0,1);
-		myList.add(1,5);
-		myList.add(2,10);
-		Assertions.assertDoesNotThrow(()->myList.get(100));
-	}
+  @Test
+  @DisplayName("Adding with an invalid index should throw an exception")
+  void testAddAtInvalidIndex() {
+    assertThrows(IndexOutOfBoundsException.class, () -> list.add(-1, 10));
+    assertThrows(IndexOutOfBoundsException.class, () -> list.add(1, 10));
 
-	@Test
-	void testRemoveFirst() {
-		SafeLinkedList<Integer> myList = new SafeLinkedList<>();
-		Assertions.assertDoesNotThrow(()->myList.removeFirst());
-	}
+    list.addFirst(7);
+    assertThrows(IndexOutOfBoundsException.class, () -> list.add(2, 10));
+  }
 
-	@Test
-	void testRemoveLast() {
-		SafeLinkedList<Integer> myList = new SafeLinkedList<>();
-		Assertions.assertDoesNotThrow(()->myList.removeLast());
-	}
+  @Nested
+  @DisplayName("Element Getting Tests")
+  class GetTests {
 
-	@Test
-	void testRemoveInt() {
-		SafeLinkedList<Integer> myList = new SafeLinkedList<>();
-		myList.add(0,1);
-		myList.add(1,5);
-		myList.add(2,10);
-		Assertions.assertDoesNotThrow(()->myList.remove(100));
-	}
+    @BeforeEach
+    void setUp() {
+      list.addLast(1);
+      list.addLast(2);
+      list.addLast(3);
+    }
 
+    @Test
+    @DisplayName("Getting the first element")
+    void testGetFirst() {
+      assertEquals(Integer.valueOf(1), list.getFirst());
+    }
+
+    @Test
+    @DisplayName("Getting the last element")
+    void testGetLast() {
+      assertEquals(Integer.valueOf(3), list.getLast());
+    }
+
+    @ParameterizedTest
+    @CsvSource({"0, 1", "1, 2", "2, 3"})
+    @DisplayName("Getting an element by index")
+    void testGetByIndex(int index, Integer expected) {
+      assertEquals(expected, list.get(index));
+    }
+
+    @Test
+    @DisplayName("Getting by invalid index should throw an exception")
+    void testGetInvalidIndex() {
+      assertThrows(IndexOutOfBoundsException.class, () -> list.get(-1));
+      assertThrows(IndexOutOfBoundsException.class, () -> list.get(3));
+    }
+  }
+
+  @Nested
+  @DisplayName("Element Removal Tests")
+  class RemoveTests {
+
+    @BeforeEach
+    void setUp() {
+      list.addLast(1);
+      list.addLast(2);
+      list.addLast(3);
+      list.addLast(4);
+    }
+
+    @Test
+    @DisplayName("Removing the first element")
+    void testRemoveFirst() {
+      assertEquals(Integer.valueOf(1), list.removeFirst());
+      assertEquals(3, list.size());
+      assertEquals(Integer.valueOf(2), list.getFirst());
+    }
+
+    @Test
+    @DisplayName("Removing the last element")
+    void testRemoveLast() {
+      assertEquals(Integer.valueOf(4), list.removeLast());
+      assertEquals(3, list.size());
+      assertEquals(Integer.valueOf(3), list.getLast());
+    }
+
+    @Test
+    @DisplayName("Delete by index")
+    void testRemoveAtIndex() {
+      assertEquals(Integer.valueOf(2), list.remove(1));
+      assertEquals(3, list.size());
+      assertEquals(Integer.valueOf(3), list.get(1));
+    }
+
+    @Test
+    @DisplayName("Deleting by invalid index should throw an exception")
+    void testRemoveInvalidIndex() {
+      assertThrows(IndexOutOfBoundsException.class, () -> list.remove(-1));
+      assertThrows(IndexOutOfBoundsException.class, () -> list.remove(4));
+    }
+  }
 }
