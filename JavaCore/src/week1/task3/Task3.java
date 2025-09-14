@@ -7,9 +7,7 @@ import java.util.List;
 public class Task3 {
 
   static final Object lock = new Object();
-
   public static List<Components> producedComponents = new ArrayList<>();
-
   public static List<Components> robotComponents;
 
   public static void main(String[] args) throws InterruptedException {
