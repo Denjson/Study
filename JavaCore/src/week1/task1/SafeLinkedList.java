@@ -1,90 +1,157 @@
 package week1.task1;
 
-import java.util.LinkedList;
+public class SafeLinkedList<K> {
 
-public class SafeLinkedList<T> extends LinkedList<T> {			// safe implementation of LinkedList<> for study purposes, do not throw Exceptions
+  private static class Node<K> {
+    K data;
+    Node<K> next;
+    Node<K> prev;
 
-	private static final long serialVersionUID = 1L;
+    Node(K data) {
+      this.data = data;
+      this.next = null;
+      this.prev = null;
+    }
+  }
 
-	@Override
-	public int size() {
-		int size = super.size();
-		if (size == 0)
-			System.out.println("The list is empty");
-		return super.size();
-	}
+  private Node<K> head;
+  private Node<K> tail;
+  private int size;
 
-	@Override
-	public void addFirst(T e) {
-		super.addFirst(e);
-		System.out.println("The current list is " + this.toString());
-	}
+  public SafeLinkedList() {
+    this.head = null;
+    this.tail = null;
+    this.size = 0;
+  }
 
-	@Override
-	public void addLast(T e) {
-		super.addLast(e);
-		System.out.println("The current list is " + this.toString());
-	}
+  public int size() {
+    return size;
+  }
 
-	@Override
-	public void add(int index, T element) {
-		if (index < 0 || index > (this.size() + 1)) {
-			System.out.println("An incorrect index was used");
-			return;
-		}
+  public void addFirst(K el) {
+    Node<K> newNode = new Node<>(el);
+    if (head == null) {
+      head = newNode;
+      tail = newNode;
+    } else {
+      newNode.next = head;
+      head.prev = newNode;
+      head = newNode;
+    }
+    size++;
+  }
 
-		super.add(index, element);
-	}
+  public void addLast(K el) {
+    Node<K> newNode = new Node<>(el);
+    if (tail == null) {
+      head = newNode;
+      tail = newNode;
+    } else {
+      tail.next = newNode;
+      newNode.prev = tail;
+      tail = newNode;
+    }
+    size++;
+  }
 
-	@Override
-	public T getFirst() {
-		if (this.isEmpty()) {
-			System.out.println("The list is empty");
-			return null;
-		}
-		return super.getFirst();
-	}
+  public void add(int index, K el) {
+    if (index < 0 || index > size) {
+      throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
+    if (index == 0) {
+      addFirst(el);
+    } else if (index == size) {
+      addLast(el);
+    } else {
+      Node<K> current = head;
+      for (int i = 0; i < index; i++) {
+        current = current.next;
+      }
+      Node<K> newNode = new Node<>(el);
+      newNode.prev = current.prev;
+      newNode.next = current;
+      current.prev.next = newNode;
+      current.prev = newNode;
+      size++;
+    }
+  }
 
-	@Override
-	public T getLast() {
-		if (this.isEmpty()) {
-			System.out.println("The list is empty");
-			return null;
-		}
-		return super.getLast();
-	}
-	@Override
-	public T get(int index) {
-		if (this.isEmpty()||index<0||index>=this.size()) {
-			System.out.println("An incorrect index was used or the list is empty");
-			return null;
-		}
-		return super.get(index);
-	}
-	@Override
-	public T removeFirst() {
-		if (this.isEmpty()) {
-			System.out.println("The list is empty");
-			return null;
-		}
-		return super.removeFirst();
-	}
-	@Override
-	public T removeLast() {
-		if (this.isEmpty()) {
-			System.out.println("The list is empty");
-			return null;
-		}
-		return super.removeLast();
-	}
-	@Override
-	public T remove(int index) {
-		if ((this.isEmpty()||index<0||index>=this.size())){
-			System.out.println("Unable to remove an element by index or the list is empty");
-			return null;
-		}
-				
-		return super.remove(index);
-	}
+  public K getFirst() {
+    if (head == null) {
+      throw new java.util.NoSuchElementException("List is empty");
+    }
+    return head.data;
+  }
 
+  public K getLast() {
+    if (tail == null) {
+      throw new java.util.NoSuchElementException("List is empty");
+    }
+    return tail.data;
+  }
+
+  public K get(int index) {
+    if (index < 0 || index >= size) {
+      throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
+    Node<K> current = head;
+    for (int i = 0; i < index; i++) {
+      current = current.next;
+    }
+    return current.data;
+  }
+
+  public K removeFirst() {
+    if (head == null) {
+      throw new java.util.NoSuchElementException("List is empty");
+    }
+    K data = head.data;
+    if (head == tail) {
+      head = null;
+      tail = null;
+    } else {
+      head = head.next;
+      head.prev = null;
+    }
+    size--;
+    return data;
+  }
+
+  public K removeLast() {
+    if (tail == null) {
+      throw new java.util.NoSuchElementException("List is empty");
+    }
+    K data = tail.data;
+    if (head == tail) {
+      head = null;
+      tail = null;
+    } else {
+      tail = tail.prev;
+      tail.next = null;
+    }
+    size--;
+    return data;
+  }
+
+  public K remove(int index) {
+    if (index < 0 || index >= size) {
+      throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
+    if (index == 0) {
+      return removeFirst();
+    }
+    if (index == size - 1) {
+      return removeLast();
+    }
+
+    Node<K> current = head;
+    for (int i = 0; i < index; i++) {
+      current = current.next;
+    }
+    K data = current.data;
+    current.prev.next = current.next;
+    current.next.prev = current.prev;
+    size--;
+    return data;
+  }
 }
