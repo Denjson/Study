@@ -3,16 +3,16 @@ package com.study.userservice;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.study.userservice.mappers.UserMapper;
 import com.study.userservice.repository.UserRepository;
-import com.study.userservice.service.UserService;
+import com.study.userservice.service.UserServiceImpl;
 
 @Configuration
-// @ComponentScan(basePackages = {"com.study.us"})
 public class MyConfig {
 
   @Bean
-  public UserService userService(UserRepository userRepository) {
-    return new UserService(userRepository);
+  public UserServiceImpl userService(UserRepository userRepository, UserMapper userMapper) {
+    return new UserServiceImpl(userRepository, userMapper);
   }
 
   //  @Bean

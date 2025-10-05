@@ -1,12 +1,13 @@
-package com.study.userservice.service;
+package com.study.userservice.service.interfaces;
 
 import java.util.List;
 import java.util.Set;
 
 import com.study.userservice.dto.CardDto;
+import com.study.userservice.dto.UserDto;
 import com.study.userservice.entity.Card;
 
-public interface CardServiceInterface {
+public interface CardService {
 
   public CardDto saveOne(Card c);
 
@@ -22,9 +23,7 @@ public interface CardServiceInterface {
 
   public List<CardDto> getAllCards();
 
-  //  public Card getCardLast();
+  public List<CardDto> delCardLast();
 
-  public Iterable<Card> delCardLast();
-
-  //  public Iterable<Card> addTestCard();
+  public CardDto addRandomCard(UserDto u);
 }

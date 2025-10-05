@@ -1,8 +1,11 @@
 package com.study.userservice.dto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class CardDto {
+public class CardDto implements Serializable {
+
+  private static final long serialVersionUID = -4148527552923468778L;
 
   private Long id;
 
