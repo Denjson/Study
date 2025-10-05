@@ -2,6 +2,11 @@
 
 --changeset DenRod:1
 --comment: just a test
+
+
+INSERT INTO users_seq (next_val)
+VALUES (1);
+
 CREATE TABLE card_info (
   id int NOT NULL AUTO_INCREMENT,
   user_id int,
@@ -22,5 +27,3 @@ CREATE TABLE card_info_seq (
 INSERT INTO card_info_seq (next_val)
 VALUES (1);
 
-INSERT INTO card_info (user_id, number, holder, expiration_date)
-VALUES (1, 222 ,"Max", "12-12-25");

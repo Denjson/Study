@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.study.userservice.dto.CardDto;
+import com.study.userservice.dto.UserDto;
 import com.study.userservice.entity.Card;
-import com.study.userservice.entity.User;
-import com.study.userservice.service.CardService;
-import com.study.userservice.service.UserService;
+import com.study.userservice.service.interfaces.CardService;
+import com.study.userservice.service.interfaces.UserService;
 
 @RestController
-@RequestMapping(path = "/demo") // http://localhost:8080/demo
+@RequestMapping(path = "/api/v1")
 public class CardController {
 
   private final UserService userService;
@@ -31,16 +31,13 @@ public class CardController {
     this.cardService = cardService;
   }
 
-  @PostMapping(path = "/addcard")
-  // {"userId":402,"number":"123456","holder":"CardHolder","dateEx":"2022-02-16T10:22:15"}
+  @PostMapping(path = "/card")
   public ResponseEntity<CardDto> createCard(@RequestBody Card c) {
     CardDto cardDto = cardService.saveOne(c);
     return ResponseEntity.ok(cardDto);
   }
 
-  @PostMapping(path = "/addallcards") // adding array in Postman:
-  //  [{"userId":402,"number":"111111","holder":"CardHolder","dateEx":"2022-02-16T10:22:15"},
-  //   {"userId":402,"number":"222222","holder":"CardHolder","dateEx":"2022-02-16T10:22:15"}]
+  @PostMapping(path = "/cards")
   public ResponseEntity<List<CardDto>> createCards(@RequestBody List<Card> cards) {
     List<CardDto> cardsDto = cardService.saveMany(cards);
     return ResponseEntity.ok(cardsDto);
@@ -52,39 +49,40 @@ public class CardController {
     return ResponseEntity.ok(cardDto);
   }
 
-  @GetMapping("/cards/{ids}") // http://localhost:8080/cards/1,5,3
+  @GetMapping("/cards/{ids}")
   public ResponseEntity<List<CardDto>> getCardsByIds(@PathVariable Set<Long> ids) {
     List<CardDto> cardsDto = cardService.getByIds(ids);
     return ResponseEntity.ok(cardsDto);
   }
 
-  @PutMapping("/updatecard/{id}")
-  // {"userId":"552","number":"987654","holder":"CannotChangeCardHolder","dateEx":"2022-02-16T10:22:15"}
+  @PutMapping("/card/{id}")
   public ResponseEntity<CardDto> updateCard(@PathVariable Long id, @RequestBody Card c) {
     CardDto cardDto = cardService.updateCard(id, c);
     return ResponseEntity.ok(cardDto);
   }
 
-  @GetMapping(path = "/addrandomcard") // http://localhost:8080/demo/addcard
-  public Card getCard() {
-    User u = userService.getRandomUser();
-    Card c = cardService.addRandomCard(u);
-    return c;
+  @GetMapping(path = "/card/random")
+  public ResponseEntity<CardDto> addCard() {
+    UserDto userDto = userService.getRandomUser();
+    CardDto card = cardService.addRandomCard(userDto);
+    return ResponseEntity.ok(card);
   }
 
-  @GetMapping(path = "/allcards") // http://localhost:8080/demo/allcards
-  public List<CardDto> getAllCards() {
-    return cardService.getAllCards();
+  @GetMapping(path = "/cards")
+  public ResponseEntity<List<CardDto>> getAllCards() {
+    List<CardDto> cardsDto = cardService.getAllCards();
+    return ResponseEntity.ok(cardsDto);
   }
 
-  @DeleteMapping("/delcard/{id}")
+  @DeleteMapping("/card/{id}")
   public ResponseEntity<CardDto> deleteCardById(@PathVariable Long id) {
     CardDto cardDto = cardService.deleteById(id);
     return ResponseEntity.ok(cardDto);
   }
 
-  @GetMapping(path = "/dellastcard") // http://localhost:8080/demo/delcard
-  public Iterable<Card> deleteLastCard() {
-    return cardService.delCardLast();
+  @GetMapping(path = "/card/last")
+  public ResponseEntity<List<CardDto>> deleteLastCard() {
+    List<CardDto> cardsDto = cardService.delCardLast();
+    return ResponseEntity.ok(cardsDto);
   }
 }

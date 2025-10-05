@@ -1,8 +1,11 @@
 package com.study.userservice.dto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class UserDto {
+public class UserDto implements Serializable {
+
+  private static final long serialVersionUID = -4858846000871596637L;
 
   private Long id;
 

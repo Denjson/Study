@@ -42,10 +42,6 @@ public class Card {
     return userId;
   }
 
-  public Long getUserIdLong() {
-    return (long) userId;
-  }
-
   public void setUserId(Long userId) {
     this.userId = userId;
   }
