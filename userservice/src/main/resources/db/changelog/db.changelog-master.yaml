@@ -1,7 +1,0 @@
-databaseChangeLog:
- - include:
-      file: db/changelog/changelog-05.sql
- - include:
-      file: db/changelog/changelog-06.sql
- - include:
-      file: db/changelog/changelog-07.sql
