@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.study.userservice.dto.UserDto;
+import com.study.userservice.dto.UserRequestDTO;
+import com.study.userservice.dto.UserResponseDTO;
 import com.study.userservice.service.interfaces.UserService;
 
 @RestController
@@ -27,85 +28,87 @@ public class UserController {
   }
 
   @PostMapping(path = "/user")
-  public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-    UserDto userDtoNew = userService.saveOne(userDto);
-    return ResponseEntity.ok(userDtoNew);
+  public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequestDTO) {
+    UserResponseDTO userResponseDTO = userService.saveOne(userRequestDTO);
+    return ResponseEntity.ok(userResponseDTO);
   }
 
   @PostMapping(path = "/users")
-  public ResponseEntity<List<UserDto>> createUsers(@RequestBody List<UserDto> userDTOs) {
-    List<UserDto> usersDto = userService.saveMany(userDTOs);
-    return ResponseEntity.ok(usersDto);
+  public ResponseEntity<List<UserResponseDTO>> createUsers(
+      @RequestBody List<UserRequestDTO> UserRequestDTOs) {
+    List<UserResponseDTO> userResponseDTOs = userService.saveMany(UserRequestDTOs);
+    return ResponseEntity.ok(userResponseDTOs);
   }
 
   @GetMapping("/user/{id}")
-  public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
-    UserDto userDto = userService.getById(id);
-    return ResponseEntity.ok(userDto);
+  public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
+    UserResponseDTO userResponseDTO = userService.getById(id);
+    return ResponseEntity.ok(userResponseDTO);
   }
 
   @GetMapping("/users/{ids}")
-  public ResponseEntity<List<UserDto>> getUsersByIds(@PathVariable Set<Long> ids) {
-    List<UserDto> usersDto = userService.getByIds(ids);
-    return ResponseEntity.ok(usersDto);
+  public ResponseEntity<List<UserResponseDTO>> getUsersByIds(@PathVariable Set<Long> ids) {
+    List<UserResponseDTO> userResponseDTOs = userService.getByIds(ids);
+    return ResponseEntity.ok(userResponseDTOs);
   }
 
   @GetMapping("/user/email/{email}")
-  public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email) {
-    UserDto userDto = userService.getByEmail(email);
-    return ResponseEntity.ok(userDto);
+  public ResponseEntity<UserResponseDTO> getUserByEmail(@PathVariable String email) {
+    UserResponseDTO userResponseDTO = userService.getByEmail(email);
+    return ResponseEntity.ok(userResponseDTO);
   }
 
   @PutMapping("/user/{id}")
-  public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
-    UserDto userDtoUpdated = userService.updateUser(id, userDto);
-    return ResponseEntity.ok(userDtoUpdated);
+  public ResponseEntity<UserResponseDTO> updateUser(
+      @PathVariable Long id, @RequestBody UserRequestDTO userRequestDTO) {
+    UserResponseDTO userResponseDTO = userService.updateUser(id, userRequestDTO);
+    return ResponseEntity.ok(userResponseDTO);
   }
 
   @DeleteMapping("/user/{id}")
-  public ResponseEntity<UserDto> deleteUserById(@PathVariable Long id) {
-    UserDto userDto = userService.deleteById(id);
-    return ResponseEntity.ok(userDto);
+  public ResponseEntity<UserResponseDTO> deleteUserById(@PathVariable Long id) {
+    UserResponseDTO userResponseDTO = userService.deleteById(id);
+    return ResponseEntity.ok(userResponseDTO);
   }
 
-  @GetMapping(path = "/user/test")
-  public ResponseEntity<List<UserDto>> addTestUser() {
-    List<UserDto> usersDto = userService.addTestUser();
-    return ResponseEntity.ok(usersDto);
+  @GetMapping(path = "/admin/test")
+  public ResponseEntity<List<UserResponseDTO>> addTestUser() {
+    List<UserResponseDTO> userResponseDTO = userService.addTestUser();
+    return ResponseEntity.ok(userResponseDTO);
   }
 
-  @GetMapping(path = "/user/deltest")
-  public ResponseEntity<UserDto> deleteLast() {
-    UserDto userDto = userService.delUserLast();
-    return ResponseEntity.ok(userDto);
+  @GetMapping(path = "/admin/dellast")
+  public ResponseEntity<UserResponseDTO> deleteLastUser() {
+    UserResponseDTO userResponseDTO = userService.delUserLast();
+    return ResponseEntity.ok(userResponseDTO);
   }
 
   @GetMapping(path = "/user/last")
-  public ResponseEntity<UserDto> getLast() {
-    UserDto userDto = userService.getUserLast();
-    return ResponseEntity.ok(userDto);
+  public ResponseEntity<UserResponseDTO> getLastUser() {
+    UserResponseDTO userResponseDTO = userService.getUserLast();
+    return ResponseEntity.ok(userResponseDTO);
   }
 
   @GetMapping(path = "/users")
-  public ResponseEntity<List<UserDto>> getAllU() {
+  public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
     return ResponseEntity.ok(userService.getAllUsers());
   }
 
   @GetMapping(path = "/user/random")
-  public ResponseEntity<UserDto> getRUse() {
-    UserDto userDto = userService.getRandomUser();
-    return ResponseEntity.ok(userDto);
+  public ResponseEntity<UserResponseDTO> getRandomUse() {
+    UserResponseDTO userResponseDTO = userService.getRandomUser();
+    return ResponseEntity.ok(userResponseDTO);
   }
 
   @GetMapping(path = "/user/native/{n}")
-  public ResponseEntity<List<UserDto>> getRangeIds(@PathVariable Integer n) {
-    List<UserDto> usersDto = userService.getRangeIds(n);
-    return ResponseEntity.ok(usersDto);
+  public ResponseEntity<List<UserResponseDTO>> getRangeIds(@PathVariable Integer n) {
+    List<UserResponseDTO> userResponseDTOs = userService.getRangeIds(n);
+    return ResponseEntity.ok(userResponseDTOs);
   }
 
   @GetMapping(path = "/user/jpql/{lastname}")
-  public ResponseEntity<List<UserDto>> findByJPQL(@PathVariable String lastname) {
-    List<UserDto> usersDto = userService.findByJPQL(lastname);
-    return ResponseEntity.ok(usersDto);
+  public ResponseEntity<List<UserResponseDTO>> findByJPQL(@PathVariable String lastname) {
+    List<UserResponseDTO> userResponseDTOs = userService.findByJPQL(lastname);
+    return ResponseEntity.ok(userResponseDTOs);
   }
 }

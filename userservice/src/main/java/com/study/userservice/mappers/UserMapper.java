@@ -5,38 +5,39 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.study.userservice.dto.UserDto;
+import com.study.userservice.dto.UserRequestDTO;
+import com.study.userservice.dto.UserResponseDTO;
 import com.study.userservice.entity.User;
 
 @Component
 public class UserMapper {
 
-  public UserDto toDTO(User user) {
+  public UserResponseDTO toDTO(User user) {
     if (user == null) {
       return null;
     }
-    return new UserDto(
+    return new UserResponseDTO(
         user.getId(), user.getName(), user.getSurname(), user.getDate(), user.getEmail());
   }
 
-  public List<UserDto> toDTOs(List<User> users) {
+  public List<UserResponseDTO> toDTOs(List<User> users) {
     return users.stream().map(this::toDTO).collect(Collectors.toList());
   }
 
-  public User toEntity(UserDto userDto) {
-    if (userDto == null) {
+  public User toEntity(UserRequestDTO userRequestDto) {
+    if (userRequestDto == null) {
       return null;
     }
     User user = new User();
-    user.setId(userDto.getId());
-    user.setName(userDto.getName());
-    user.setSurname(userDto.getSurname());
-    user.setDate(userDto.getDate());
-    user.setEmail(userDto.getEmail());
+    user.setId(userRequestDto.getId());
+    user.setName(userRequestDto.getName());
+    user.setSurname(userRequestDto.getSurname());
+    user.setDate(userRequestDto.getDate());
+    user.setEmail(userRequestDto.getEmail());
     return user;
   }
 
-  public List<User> manyToEntity(List<UserDto> userDTOs) {
+  public List<User> manyToEntity(List<UserRequestDTO> userDTOs) {
     return userDTOs.stream().map(this::toEntity).collect(Collectors.toList());
   }
 }

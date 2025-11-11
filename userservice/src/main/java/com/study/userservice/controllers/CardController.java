@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.study.userservice.dto.CardDto;
-import com.study.userservice.dto.UserDto;
-import com.study.userservice.entity.Card;
+import com.study.userservice.dto.CardRequestDTO;
+import com.study.userservice.dto.CardResponseDTO;
+import com.study.userservice.dto.UserResponseDTO;
 import com.study.userservice.service.interfaces.CardService;
 import com.study.userservice.service.interfaces.UserService;
 
@@ -32,57 +32,59 @@ public class CardController {
   }
 
   @PostMapping(path = "/card")
-  public ResponseEntity<CardDto> createCard(@RequestBody Card c) {
-    CardDto cardDto = cardService.saveOne(c);
-    return ResponseEntity.ok(cardDto);
+  public ResponseEntity<CardResponseDTO> createCard(@RequestBody CardRequestDTO cardRequestDTO) {
+    CardResponseDTO cardResponseDTO = cardService.saveOne(cardRequestDTO);
+    return ResponseEntity.ok(cardResponseDTO);
   }
 
   @PostMapping(path = "/cards")
-  public ResponseEntity<List<CardDto>> createCards(@RequestBody List<Card> cards) {
-    List<CardDto> cardsDto = cardService.saveMany(cards);
-    return ResponseEntity.ok(cardsDto);
+  public ResponseEntity<List<CardResponseDTO>> createCards(
+      @RequestBody List<CardRequestDTO> cardRequestDTOs) {
+    List<CardResponseDTO> cardResponseDTO = cardService.saveMany(cardRequestDTOs);
+    return ResponseEntity.ok(cardResponseDTO);
   }
 
   @GetMapping("/card/{id}")
-  public ResponseEntity<CardDto> getCardById(@PathVariable Long id) {
-    CardDto cardDto = cardService.getById(id);
-    return ResponseEntity.ok(cardDto);
+  public ResponseEntity<CardResponseDTO> getCardById(@PathVariable Long id) {
+    CardResponseDTO cardResponseDTO = cardService.getById(id);
+    return ResponseEntity.ok(cardResponseDTO);
   }
 
   @GetMapping("/cards/{ids}")
-  public ResponseEntity<List<CardDto>> getCardsByIds(@PathVariable Set<Long> ids) {
-    List<CardDto> cardsDto = cardService.getByIds(ids);
-    return ResponseEntity.ok(cardsDto);
+  public ResponseEntity<List<CardResponseDTO>> getCardsByIds(@PathVariable Set<Long> ids) {
+    List<CardResponseDTO> cardResponseDTOs = cardService.getByIds(ids);
+    return ResponseEntity.ok(cardResponseDTOs);
   }
 
   @PutMapping("/card/{id}")
-  public ResponseEntity<CardDto> updateCard(@PathVariable Long id, @RequestBody Card c) {
-    CardDto cardDto = cardService.updateCard(id, c);
-    return ResponseEntity.ok(cardDto);
+  public ResponseEntity<CardResponseDTO> updateCard(
+      @PathVariable Long id, @RequestBody CardRequestDTO cardRequestDTO) {
+    CardResponseDTO cardResponseDTO = cardService.updateCard(id, cardRequestDTO);
+    return ResponseEntity.ok(cardResponseDTO);
   }
 
   @GetMapping(path = "/card/random")
-  public ResponseEntity<CardDto> addCard() {
-    UserDto userDto = userService.getRandomUser();
-    CardDto card = cardService.addRandomCard(userDto);
-    return ResponseEntity.ok(card);
+  public ResponseEntity<CardResponseDTO> addCard() {
+    UserResponseDTO userResponseDTO = userService.getRandomUser();
+    CardResponseDTO cardResponseDTO = cardService.addRandomCard(userResponseDTO);
+    return ResponseEntity.ok(cardResponseDTO);
   }
 
   @GetMapping(path = "/cards")
-  public ResponseEntity<List<CardDto>> getAllCards() {
-    List<CardDto> cardsDto = cardService.getAllCards();
-    return ResponseEntity.ok(cardsDto);
+  public ResponseEntity<List<CardResponseDTO>> getAllCards() {
+    List<CardResponseDTO> cardResponseDTOs = cardService.getAllCards();
+    return ResponseEntity.ok(cardResponseDTOs);
   }
 
   @DeleteMapping("/card/{id}")
-  public ResponseEntity<CardDto> deleteCardById(@PathVariable Long id) {
-    CardDto cardDto = cardService.deleteById(id);
-    return ResponseEntity.ok(cardDto);
+  public ResponseEntity<CardResponseDTO> deleteCardById(@PathVariable Long id) {
+    CardResponseDTO cardResponseDTO = cardService.deleteById(id);
+    return ResponseEntity.ok(cardResponseDTO);
   }
 
   @GetMapping(path = "/card/last")
-  public ResponseEntity<List<CardDto>> deleteLastCard() {
-    List<CardDto> cardsDto = cardService.delCardLast();
-    return ResponseEntity.ok(cardsDto);
+  public ResponseEntity<CardResponseDTO> deleteLastCard() {
+    CardResponseDTO cardResponseDTO = cardService.delCardLast();
+    return ResponseEntity.ok(cardResponseDTO);
   }
 }

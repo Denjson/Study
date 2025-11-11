@@ -13,10 +13,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
-import com.study.userservice.dto.CardDto;
-import com.study.userservice.dto.UserDto;
+import com.study.userservice.dto.CardRequestDTO;
+import com.study.userservice.dto.CardResponseDTO;
+import com.study.userservice.dto.UserResponseDTO;
 import com.study.userservice.entity.Card;
 import com.study.userservice.entity.User;
+import com.study.userservice.exceptions.DuplicatedValueException;
 import com.study.userservice.exceptions.IdNotFoundException;
 import com.study.userservice.mappers.CardMapper;
 import com.study.userservice.repository.CardRepository;
@@ -38,32 +40,39 @@ public class CardServiceImpl implements CardService {
   }
 
   @CacheEvict(value = "cards", key = "0")
-  public CardDto saveOne(Card c) {
-    Optional<User> userOptional = userRepository.findById(c.getUserId());
-    if (userOptional.isPresent()) {
-      cardRepository.save(c);
-      System.out.println("User found. Card added: " + c.toString());
-    } else {
-      System.out.println("User with ID is not found: " + c.getUserId());
-      return null;
+  public CardResponseDTO saveOne(CardRequestDTO cardRequestDTO) {
+    userRepository
+        .findById(cardRequestDTO.getUserId())
+        .orElseThrow(
+            () -> new IdNotFoundException("User not found with id: " + cardRequestDTO.getUserId()));
+    if (cardRepository.getByNumber(cardRequestDTO.getNumber()).isPresent()) {
+      throw new DuplicatedValueException(
+          "Card number is duplicated: " + cardRequestDTO.getNumber());
     }
-    return cardMapper.toDTO(c);
+    Card card = cardRepository.save(cardMapper.toEntity(cardRequestDTO));
+    System.out.println("User found. Card added: " + cardRequestDTO.toString());
+    return cardMapper.toDTO(card);
   }
 
   @CacheEvict(value = "cards", key = "0")
-  public List<CardDto> saveMany(List<Card> cards) {
+  public List<CardResponseDTO> saveMany(List<CardRequestDTO> cardRequestDTOs) {
+    List<Card> cards = cardMapper.manyToEntity(cardRequestDTOs);
     Set<Long> usersFromCards = cards.stream().map(Card::getUserId).collect(Collectors.toSet());
     Optional<List<User>> usersFound = userRepository.findByIdIn(usersFromCards);
+    if (usersFound.get().isEmpty()) {
+      throw new IdNotFoundException("Users not found with ids: " + usersFromCards);
+    }
     if (usersFound.get().size() == usersFromCards.size()) {
       cardRepository.saveAll(cards);
       System.out.println("All users found. Saved Cards: " + cards);
       return cardMapper.toDTOs(cards);
+    } else {
+      throw new IdNotFoundException("Users not found with ids: " + usersFromCards);
     }
-    return null;
   }
 
   @Cacheable(value = "cards", key = "#id")
-  public CardDto getById(Long id) {
+  public CardResponseDTO getById(Long id) {
     Card card =
         cardRepository
             .findById(id)
@@ -71,7 +80,7 @@ public class CardServiceImpl implements CardService {
     return cardMapper.toDTO(card);
   }
 
-  public List<CardDto> getByIds(Set<Long> ids) {
+  public List<CardResponseDTO> getByIds(Set<Long> ids) {
     List<Card> cards = cardRepository.findByIdIn(ids).get();
     if (cards.isEmpty()) {
       throw new IdNotFoundException("Cards not found with ids: " + ids);
@@ -81,15 +90,15 @@ public class CardServiceImpl implements CardService {
   }
 
   @Cacheable(value = "cards", key = "0")
-  public List<CardDto> getAllCards() {
+  public List<CardResponseDTO> getAllCards() {
     List<Card> cards = IterableUtils.toList(cardRepository.findAll());
-    List<CardDto> cardsDto = cardMapper.toDTOs(cards);
-    return cardsDto;
+    List<CardResponseDTO> cardResponseDTOs = cardMapper.toDTOs(cards);
+    return cardResponseDTOs;
   }
 
   @Caching(
       evict = {@CacheEvict(value = "cards", key = "#id"), @CacheEvict(value = "cards", key = "0")})
-  public CardDto deleteById(Long id) {
+  public CardResponseDTO deleteById(Long id) {
     Card card =
         cardRepository
             .findById(id)
@@ -99,19 +108,21 @@ public class CardServiceImpl implements CardService {
   }
 
   @CacheEvict(value = "cards", key = "0")
-  public List<CardDto> delCardLast() {
-    if (cardRepository.count() > 0) {
-      Optional<Card> u = cardRepository.findTopByOrderByIdDesc();
-      System.out.println("Delete last card: " + cardRepository.findTopByOrderByIdDesc().get());
-      cardRepository.delete(u.get());
-    }
-    List<Card> cards = IterableUtils.toList(cardRepository.findAll());
-    return cardMapper.toDTOs(cards);
+  public CardResponseDTO delCardLast() {
+    Card card =
+        cardRepository
+            .findTopByOrderByIdDesc()
+            .orElseThrow(() -> new IdNotFoundException("Card not found"));
+    System.out.println("Delete last card: " + card);
+    CardResponseDTO сardResponseDTO = cardMapper.toDTO(card);
+    cardRepository.delete(card);
+
+    return сardResponseDTO;
   }
 
   @CachePut(value = "cards", key = "#id")
   @CacheEvict(value = "cards", key = "0")
-  public CardDto updateCard(Long id, Card cardDetails) {
+  public CardResponseDTO updateCard(Long id, CardRequestDTO cardDetails) {
     Optional<User> userOptional = userRepository.findById(cardDetails.getUserId());
     Card card =
         cardRepository
@@ -132,14 +143,14 @@ public class CardServiceImpl implements CardService {
   }
 
   @CacheEvict(value = "cards", key = "0")
-  public CardDto addRandomCard(UserDto userDto) {
-    Card c = new Card();
-    c.setUserId(userDto.getId());
-    c.setNumber((int) (Math.random() * 10000000) + 1000000);
-    c.setHolder(userDto.getName());
-    c.setDateEx(LocalDateTime.now());
-    System.out.println("From UserService - Card added to Random user: " + c.toString());
-    cardRepository.save(c);
-    return cardMapper.toDTO(c);
+  public CardResponseDTO addRandomCard(UserResponseDTO userResponseDto) {
+    Card card = new Card();
+    card.setUserId(userResponseDto.getId());
+    card.setNumber((int) (Math.random() * 10000000) + 1000000);
+    card.setHolder(userResponseDto.getName());
+    card.setDateEx(LocalDateTime.now());
+    System.out.println("From UserService - Card added to Random user: " + card.toString());
+    cardRepository.save(card);
+    return cardMapper.toDTO(card);
   }
 }

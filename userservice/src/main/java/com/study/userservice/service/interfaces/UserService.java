@@ -3,35 +3,36 @@ package com.study.userservice.service.interfaces;
 import java.util.List;
 import java.util.Set;
 
-import com.study.userservice.dto.UserDto;
+import com.study.userservice.dto.UserRequestDTO;
+import com.study.userservice.dto.UserResponseDTO;
 
 public interface UserService {
 
-  public UserDto saveOne(UserDto u);
+  public UserResponseDTO saveOne(UserRequestDTO u);
 
-  public List<UserDto> saveMany(List<UserDto> u);
+  public List<UserResponseDTO> saveMany(List<UserRequestDTO> u);
 
-  public UserDto getById(Long id);
+  public UserResponseDTO getById(Long id);
 
-  public List<UserDto> getByIds(Set<Long> ids);
+  public List<UserResponseDTO> getByIds(Set<Long> ids);
 
-  public UserDto getByEmail(String email);
+  public UserResponseDTO getByEmail(String email);
 
-  public UserDto updateUser(Long id, UserDto userDto);
+  public UserResponseDTO updateUser(Long id, UserRequestDTO u);
 
-  public UserDto deleteById(Long id);
+  public UserResponseDTO deleteById(Long id);
 
-  public List<UserDto> getAllUsers();
+  public List<UserResponseDTO> getAllUsers();
 
-  public UserDto getUserLast();
+  public UserResponseDTO getUserLast();
 
-  public UserDto delUserLast();
+  public UserResponseDTO delUserLast();
 
-  public List<UserDto> addTestUser();
+  public List<UserResponseDTO> addTestUser();
 
-  public UserDto getRandomUser();
+  public UserResponseDTO getRandomUser();
 
-  public List<UserDto> getRangeIds(Integer n);
+  public List<UserResponseDTO> getRangeIds(Integer n);
 
-  public List<UserDto> findByJPQL(String lastname);
+  public List<UserResponseDTO> findByJPQL(String lastname);
 }
