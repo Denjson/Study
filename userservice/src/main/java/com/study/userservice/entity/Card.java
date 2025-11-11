@@ -8,13 +8,19 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "card_info")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "card_info", schema = "den_schema")
 public class Card {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private Long id;
 
@@ -29,59 +35,4 @@ public class Card {
 
   @Column(name = "expiration_date")
   private LocalDateTime dateEx;
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Long getUserId() {
-    return userId;
-  }
-
-  public void setUserId(Long userId) {
-    this.userId = userId;
-  }
-
-  public Integer getNumber() {
-    return number;
-  }
-
-  public void setNumber(Integer number) {
-    this.number = number;
-  }
-
-  public String getHolder() {
-    return holder;
-  }
-
-  public void setHolder(String holder) {
-    this.holder = holder;
-  }
-
-  public LocalDateTime getDateEx() {
-    return dateEx;
-  }
-
-  public void setDateEx(LocalDateTime dateEx) {
-    this.dateEx = dateEx;
-  }
-
-  @Override
-  public String toString() {
-    return "Card [id="
-        + id
-        + ", userId="
-        + userId
-        + ", number="
-        + number
-        + ", holder="
-        + holder
-        + ", dateEx="
-        + dateEx
-        + "]";
-  }
 }

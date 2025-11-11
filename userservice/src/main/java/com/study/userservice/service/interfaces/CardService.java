@@ -3,27 +3,27 @@ package com.study.userservice.service.interfaces;
 import java.util.List;
 import java.util.Set;
 
-import com.study.userservice.dto.CardDto;
-import com.study.userservice.dto.UserDto;
-import com.study.userservice.entity.Card;
+import com.study.userservice.dto.CardRequestDTO;
+import com.study.userservice.dto.CardResponseDTO;
+import com.study.userservice.dto.UserResponseDTO;
 
 public interface CardService {
 
-  public CardDto saveOne(Card c);
+  public CardResponseDTO saveOne(CardRequestDTO cardRequestDTO);
 
-  public List<CardDto> saveMany(List<Card> u);
+  public List<CardResponseDTO> saveMany(List<CardRequestDTO> cardRequestDTOs);
 
-  public CardDto getById(Long id);
+  public CardResponseDTO getById(Long id);
 
-  public List<CardDto> getByIds(Set<Long> ids);
+  public List<CardResponseDTO> getByIds(Set<Long> ids);
 
-  public CardDto updateCard(Long id, Card cardDetails);
+  public CardResponseDTO updateCard(Long id, CardRequestDTO cardRequestDTO);
 
-  public CardDto deleteById(Long id);
+  public CardResponseDTO deleteById(Long id);
 
-  public List<CardDto> getAllCards();
+  public List<CardResponseDTO> getAllCards();
 
-  public List<CardDto> delCardLast();
+  public CardResponseDTO delCardLast();
 
-  public CardDto addRandomCard(UserDto u);
+  public CardResponseDTO addRandomCard(UserResponseDTO u);
 }

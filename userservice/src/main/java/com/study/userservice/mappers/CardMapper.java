@@ -5,38 +5,39 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.study.userservice.dto.CardDto;
+import com.study.userservice.dto.CardRequestDTO;
+import com.study.userservice.dto.CardResponseDTO;
 import com.study.userservice.entity.Card;
 
 @Component
 public class CardMapper {
 
-  public CardDto toDTO(Card card) {
+  public CardResponseDTO toDTO(Card card) {
     if (card == null) {
       return null;
     }
-    return new CardDto(
+    return new CardResponseDTO(
         card.getId(), card.getUserId(), card.getNumber(), card.getHolder(), card.getDateEx());
   }
 
-  public List<CardDto> toDTOs(List<Card> cards) {
+  public List<CardResponseDTO> toDTOs(List<Card> cards) {
     return cards.stream().map(this::toDTO).collect(Collectors.toList());
   }
 
-  public Card toEntity(CardDto cardDto) {
-    if (cardDto == null) {
+  public Card toEntity(CardRequestDTO cardRequestDTO) {
+    if (cardRequestDTO == null) {
       return null;
     }
     Card card = new Card();
-    card.setId(cardDto.getId());
-    card.setUserId(cardDto.getUserId());
-    card.setNumber(cardDto.getNumber());
-    card.setHolder(cardDto.getHolder());
-    card.setDateEx(cardDto.getDateEx());
+    card.setId(cardRequestDTO.getId());
+    card.setUserId(cardRequestDTO.getUserId());
+    card.setNumber(cardRequestDTO.getNumber());
+    card.setHolder(cardRequestDTO.getHolder());
+    card.setDateEx(cardRequestDTO.getDateEx());
     return card;
   }
 
-  public List<Card> manyToEntity(List<CardDto> cardDTOs) {
+  public List<Card> manyToEntity(List<CardRequestDTO> cardDTOs) {
     return cardDTOs.stream().map(this::toEntity).collect(Collectors.toList());
   }
 }

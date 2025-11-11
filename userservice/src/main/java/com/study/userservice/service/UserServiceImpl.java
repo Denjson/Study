@@ -4,17 +4,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
-import org.apache.commons.collections4.IterableUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 
-import com.study.userservice.dto.UserDto;
+import com.study.userservice.dto.UserRequestDTO;
+import com.study.userservice.dto.UserResponseDTO;
 import com.study.userservice.entity.User;
 import com.study.userservice.exceptions.IdNotFoundException;
 import com.study.userservice.mappers.UserMapper;
@@ -22,30 +20,31 @@ import com.study.userservice.repository.UserRepository;
 import com.study.userservice.service.interfaces.UserService;
 
 public class UserServiceImpl implements UserService {
+
   private final UserRepository userRepository;
   private final UserMapper userMapper;
 
-  @Autowired
   public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
     this.userRepository = userRepository;
     this.userMapper = userMapper;
   }
 
   @CacheEvict(value = "users", key = "0")
-  public UserDto saveOne(UserDto userDto) {
-    User user = userRepository.save(userMapper.toEntity(userDto));
-    System.out.println("Saved User: " + userDto);
+  public UserResponseDTO saveOne(UserRequestDTO userRequestDTO) {
+    User user = userRepository.save(userMapper.toEntity(userRequestDTO));
+    System.out.println("Saved User: " + userRequestDTO);
     return userMapper.toDTO(user);
   }
 
-  public List<UserDto> saveMany(List<UserDto> userDTOs) {
-    List<User> manyUsers = userRepository.saveAll(userMapper.manyToEntity(userDTOs));
-    System.out.println("Saved Users: " + userDTOs);
+  @CacheEvict(value = "users", key = "0")
+  public List<UserResponseDTO> saveMany(List<UserRequestDTO> UserRequestDTOs) {
+    List<User> manyUsers = userRepository.saveAll(userMapper.manyToEntity(UserRequestDTOs));
+    System.out.println("Saved Users: " + UserRequestDTOs);
     return userMapper.toDTOs(manyUsers);
   }
 
   @Cacheable(value = "users", key = "#id")
-  public UserDto getById(Long id) {
+  public UserResponseDTO getById(Long id) {
     User user =
         userRepository
             .findById(id)
@@ -54,8 +53,12 @@ public class UserServiceImpl implements UserService {
   }
 
   @Caching(
-      evict = {@CacheEvict(value = "users", key = "#id"), @CacheEvict(value = "users", key = "0")})
-  public UserDto deleteById(Long id) {
+      evict = {
+        @CacheEvict(value = "users", key = "#id"),
+        @CacheEvict(value = "users", key = "0"),
+        @CacheEvict(value = "cards", key = "0")
+      })
+  public UserResponseDTO deleteById(Long id) {
     User user =
         userRepository
             .findById(id)
@@ -64,7 +67,7 @@ public class UserServiceImpl implements UserService {
     return userMapper.toDTO(user);
   }
 
-  public List<UserDto> getByIds(Set<Long> ids) {
+  public List<UserResponseDTO> getByIds(Set<Long> ids) {
     List<User> users = userRepository.findByIdIn(ids).get();
     if (users.isEmpty()) {
       throw new IdNotFoundException("Users not found with ids: " + ids);
@@ -73,7 +76,7 @@ public class UserServiceImpl implements UserService {
     return userMapper.toDTOs(users);
   }
 
-  public UserDto getByEmail(String email) {
+  public UserResponseDTO getByEmail(String email) {
     User user =
         userRepository
             .getByEmail(email)
@@ -83,52 +86,54 @@ public class UserServiceImpl implements UserService {
 
   @CachePut(value = "users", key = "#id")
   @CacheEvict(value = "users", key = "0")
-  public UserDto updateUser(Long id, UserDto userDto) {
+  public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO) {
     User user =
         userRepository
             .findById(id)
             .orElseThrow(() -> new IdNotFoundException("User not found with id: " + id));
-    userDto.setId(id);
-    user = userMapper.toEntity(userDto);
+    userRequestDTO.setId(id);
+    user = userMapper.toEntity(userRequestDTO);
     userRepository.save(user);
     System.out.println("User updated: " + user.toString());
     return userMapper.toDTO(user);
   }
 
   @Cacheable(value = "users", key = "0")
-  public List<UserDto> getAllUsers() {
-    List<User> users = IterableUtils.toList(userRepository.findAll());
+  public List<UserResponseDTO> getAllUsers() {
+    List<User> users = userRepository.findAll();
     System.out.println("All users from UserService: " + users.toString());
-    List<UserDto> usersDto = userMapper.toDTOs(users);
-    return usersDto;
+    List<UserResponseDTO> userResponseDTOs = userMapper.toDTOs(users);
+    return userResponseDTOs;
   }
 
-  public UserDto getUserLast() {
-    Optional<User> u = userRepository.findTopByOrderByIdDesc();
-    System.out.println("Last id is " + u.get().getId() + u);
-    User user = u.get();
-    UserDto userDto = userMapper.toDTO(user);
-    return userDto;
+  public UserResponseDTO getUserLast() {
+    User user =
+        userRepository
+            .findTopByOrderByIdDesc()
+            .orElseThrow(() -> new IdNotFoundException("No any users available"));
+    System.out.println("Last id is " + user.getId() + user);
+    UserResponseDTO userResponseDTO = userMapper.toDTO(user);
+    return userResponseDTO;
   }
 
   @CacheEvict(value = "users", key = "0")
-  public UserDto delUserLast() {
+  public UserResponseDTO delUserLast() {
     if (userRepository.count() > 0) {
       User user = userRepository.findTopByOrderByIdDesc().get();
       System.out.println("Delete last record: " + user);
-      UserDto userDto = userMapper.toDTO(user);
+      UserResponseDTO userResponseDTO = userMapper.toDTO(user);
       userRepository.delete(user);
-      return userDto;
+      return userResponseDTO;
     }
     return null;
   }
 
   @CacheEvict(value = "users", key = "0")
-  public List<UserDto> addTestUser() {
+  public List<UserResponseDTO> addTestUser() {
     System.out.println("Quantity of people: " + userRepository.count());
     User u = new User();
     u.setName("X CODE");
-    u.setSurname("MAN CODE");
+    u.setSurname("MANCODE");
     u.setDate(LocalDateTime.now());
     u.setEmail((int) (Math.random() * 10000) + "@me.com");
     userRepository.save(u);
@@ -136,26 +141,29 @@ public class UserServiceImpl implements UserService {
     return userMapper.toDTOs(users);
   }
 
-  public UserDto getRandomUser() {
+  public UserResponseDTO getRandomUser() {
     List<User> entityList = new ArrayList<>();
     userRepository.findAll().forEach(entityList::add);
+    if (entityList.isEmpty()) {
+      throw new IdNotFoundException("List of users is empty");
+    }
     Collections.shuffle(entityList);
     User user = entityList.getFirst();
     System.out.println("From UserService - Random user: " + user.toString());
     return userMapper.toDTO(user);
   }
 
-  public List<UserDto> getRangeIds(Integer n) {
+  public List<UserResponseDTO> getRangeIds(Integer n) {
     List<User> users = userRepository.findIdsNative(n);
     System.out.println("All users within range: " + users.toString());
-    List<UserDto> usersDto = userMapper.toDTOs(users);
-    return usersDto;
+    List<UserResponseDTO> userResponseDTOs = userMapper.toDTOs(users);
+    return userResponseDTOs;
   }
 
-  public List<UserDto> findByJPQL(String lastname) {
+  public List<UserResponseDTO> findByJPQL(String lastname) {
     List<User> users = userRepository.findByLastNameJPQL(lastname);
     System.out.println("All users with name <" + lastname + "> found: " + users.toString());
-    List<UserDto> usersDto = userMapper.toDTOs(users);
-    return usersDto;
+    List<UserResponseDTO> userResponseDTOs = userMapper.toDTOs(users);
+    return userResponseDTOs;
   }
 }
