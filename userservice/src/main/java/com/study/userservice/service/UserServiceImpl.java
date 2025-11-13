@@ -11,11 +11,13 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 
+import com.study.userservice.auditing.UserHistory;
 import com.study.userservice.dto.UserRequestDTO;
 import com.study.userservice.dto.UserResponseDTO;
 import com.study.userservice.entity.User;
 import com.study.userservice.exceptions.IdNotFoundException;
 import com.study.userservice.mappers.UserMapper;
+import com.study.userservice.repository.UserHistoryRepository;
 import com.study.userservice.repository.UserRepository;
 import com.study.userservice.service.interfaces.UserService;
 
@@ -23,10 +25,15 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final UserMapper userMapper;
+  private final UserHistoryRepository userHistoryRepository;
 
-  public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+  public UserServiceImpl(
+      UserRepository userRepository,
+      UserMapper userMapper,
+      UserHistoryRepository userHistoryRepository) {
     this.userRepository = userRepository;
     this.userMapper = userMapper;
+    this.userHistoryRepository = userHistoryRepository;
   }
 
   @CacheEvict(value = "users", key = "0")
@@ -101,6 +108,9 @@ public class UserServiceImpl implements UserService {
   @Cacheable(value = "users", key = "0")
   public List<UserResponseDTO> getAllUsers() {
     List<User> users = userRepository.findAll();
+    if (users.isEmpty()) {
+      throw new IdNotFoundException("List of users is empty");
+    }
     System.out.println("All users from UserService: " + users.toString());
     List<UserResponseDTO> userResponseDTOs = userMapper.toDTOs(users);
     return userResponseDTOs;
@@ -124,8 +134,9 @@ public class UserServiceImpl implements UserService {
       UserResponseDTO userResponseDTO = userMapper.toDTO(user);
       userRepository.delete(user);
       return userResponseDTO;
+    } else {
+      throw new IdNotFoundException("Users list is empty");
     }
-    return null;
   }
 
   @CacheEvict(value = "users", key = "0")
@@ -134,8 +145,9 @@ public class UserServiceImpl implements UserService {
     User u = new User();
     u.setName("X CODE");
     u.setSurname("MANCODE");
-    u.setDate(LocalDateTime.now());
+    u.setBirth_date(LocalDateTime.now());
     u.setEmail((int) (Math.random() * 10000) + "@me.com");
+    u.setActive(true);
     userRepository.save(u);
     List<User> users = userRepository.findAll();
     return userMapper.toDTOs(users);
@@ -162,8 +174,18 @@ public class UserServiceImpl implements UserService {
 
   public List<UserResponseDTO> findByJPQL(String lastname) {
     List<User> users = userRepository.findByLastNameJPQL(lastname);
+    if (users.isEmpty()) {
+      throw new IdNotFoundException("Users not found with lastname: " + lastname);
+    }
     System.out.println("All users with name <" + lastname + "> found: " + users.toString());
     List<UserResponseDTO> userResponseDTOs = userMapper.toDTOs(users);
     return userResponseDTOs;
+  }
+
+  public List<UserHistory> getUserLog() {
+    List<UserHistory> log = userHistoryRepository.findAll();
+    System.out.println("All users within range: " + log.toString());
+    //    List<UserResponseDTO> userResponseDTOs = userMapper.toDTOs(users);
+    return log;
   }
 }

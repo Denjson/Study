@@ -3,6 +3,7 @@ package com.study.userservice.service.interfaces;
 import java.util.List;
 import java.util.Set;
 
+import com.study.userservice.auditing.UserHistory;
 import com.study.userservice.dto.UserRequestDTO;
 import com.study.userservice.dto.UserResponseDTO;
 
@@ -35,4 +36,6 @@ public interface UserService {
   public List<UserResponseDTO> getRangeIds(Integer n);
 
   public List<UserResponseDTO> findByJPQL(String lastname);
+
+  public List<UserHistory> getUserLog();
 }

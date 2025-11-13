@@ -28,9 +28,11 @@ public class UserRequestDTO implements Serializable {
 
   private String surname;
 
-  private LocalDateTime date;
+  private LocalDateTime birth_date;
 
   @NotEmpty(message = "Email address can not be a null or empty")
   @Email(message = "Email address should be a valid value")
   private String email;
+
+  private boolean active;
 }

@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.study.userservice.mappers.UserMapper;
+import com.study.userservice.repository.UserHistoryRepository;
 import com.study.userservice.repository.UserRepository;
 import com.study.userservice.service.UserServiceImpl;
 
@@ -16,8 +17,11 @@ public class MyConfig {
    * @return UserServiceImpl
    */
   @Bean
-  public UserServiceImpl userService(UserRepository userRepository, UserMapper userMapper) {
-    return new UserServiceImpl(userRepository, userMapper);
+  public UserServiceImpl userService(
+      UserRepository userRepository,
+      UserMapper userMapper,
+      UserHistoryRepository userHistoryRepository) {
+    return new UserServiceImpl(userRepository, userMapper, userHistoryRepository);
   }
 
   //  @Bean

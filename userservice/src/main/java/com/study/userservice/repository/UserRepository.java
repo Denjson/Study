@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Optional<List<User>> findByIdIn(Set<Long> ids);
 
-  @Query(value = "SELECT * FROM users WHERE id > :n", nativeQuery = true)
+  @Query(value = "SELECT * FROM den_schema.users WHERE id > :n", nativeQuery = true)
   List<User> findIdsNative(Integer n);
 
   @Query("SELECT u FROM User u WHERE u.surname = :surname")

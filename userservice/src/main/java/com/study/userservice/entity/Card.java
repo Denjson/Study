@@ -25,7 +25,7 @@ public class Card {
   private Long id;
 
   @Column(name = "user_id")
-  private Long userId;
+  private Long user_id;
 
   @Column(name = "number")
   private Integer number;
@@ -34,5 +34,8 @@ public class Card {
   private String holder;
 
   @Column(name = "expiration_date")
-  private LocalDateTime dateEx;
+  private LocalDateTime expiration_date;
+
+  @Column(name = "active")
+  private boolean active;
 }
