@@ -1,6 +1,7 @@
 package com.study.userservice.auditing;
 
 import com.study.userservice.entity.User;
+import com.study.userservice.entity.UserHistory;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PrePersist;
@@ -13,11 +14,13 @@ public class UserEntityListener {
 
   @PrePersist
   public void prePersist(User user) {
+    System.out.println("Auditing INSERT transaction, User: " + user);
     perform(user, Action.INSERTED);
   }
 
   @PreUpdate
   public void preUpdate(User user) {
+    System.out.println("Auditing UPDATE transaction, User: " + user);
     perform(user, Action.UPDATED);
   }
 

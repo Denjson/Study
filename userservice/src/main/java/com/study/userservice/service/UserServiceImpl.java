@@ -11,10 +11,10 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 
-import com.study.userservice.auditing.UserHistory;
 import com.study.userservice.dto.UserRequestDTO;
 import com.study.userservice.dto.UserResponseDTO;
 import com.study.userservice.entity.User;
+import com.study.userservice.entity.UserHistory;
 import com.study.userservice.exceptions.IdNotFoundException;
 import com.study.userservice.mappers.UserMapper;
 import com.study.userservice.repository.UserHistoryRepository;

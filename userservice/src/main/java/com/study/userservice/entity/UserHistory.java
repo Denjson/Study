@@ -1,4 +1,4 @@
-package com.study.userservice.auditing;
+package com.study.userservice.entity;
 
 import java.util.Date;
 
@@ -8,7 +8,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.study.userservice.entity.User;
+import com.study.userservice.auditing.Action;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,10 +22,12 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
+import lombok.Data;
 
 /**
  * @author Someone
  */
+@Data
 @Entity
 @Table(name = "userhistory", schema = "den_schema")
 @EntityListeners(AuditingEntityListener.class)
@@ -41,6 +43,7 @@ public class UserHistory {
   // @Cascade(CascadeType.ALL) // not working POST operations, but DELETE working
   // @Cascade(CascadeType.MERGE)
   //  @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_id"))
+  //  @JoinColumn(name = "user_id")
   //  private User user;
 
   @Transient private User user;
@@ -67,62 +70,6 @@ public class UserHistory {
     }
     this.user = user;
     this.user_content = user.toString();
-    this.action = action;
-  }
-
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public User getUser() {
-    return user;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
-  }
-
-  public long getUser_id() {
-    return user_id;
-  }
-
-  public void setUser_id(long user_id) {
-    this.user_id = user_id;
-  }
-
-  public String getUserContent() {
-    return user_content;
-  }
-
-  public void setUserContent(String userContent) {
-    this.user_content = userContent;
-  }
-
-  public String getModifiedBy() {
-    return modified_by;
-  }
-
-  public void setModifiedBy(String modifiedBy) {
-    this.modified_by = modifiedBy;
-  }
-
-  public Date getModifiedDate() {
-    return modified_date;
-  }
-
-  public void setModifiedDate(Date modifiedDate) {
-    this.modified_date = modifiedDate;
-  }
-
-  public Action getAction() {
-    return action;
-  }
-
-  public void setAction(Action action) {
     this.action = action;
   }
 }
