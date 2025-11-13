@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.study.userservice.auditing.UserHistory;
 import com.study.userservice.dto.UserRequestDTO;
 import com.study.userservice.dto.UserResponseDTO;
 import com.study.userservice.service.interfaces.UserService;
@@ -110,5 +111,10 @@ public class UserController {
   public ResponseEntity<List<UserResponseDTO>> findByJPQL(@PathVariable String lastname) {
     List<UserResponseDTO> userResponseDTOs = userService.findByJPQL(lastname);
     return ResponseEntity.ok(userResponseDTOs);
+  }
+
+  @GetMapping(path = "/user/log")
+  public ResponseEntity<List<UserHistory>> getUsersLog() {
+    return ResponseEntity.ok(userService.getUserLog());
   }
 }

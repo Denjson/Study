@@ -17,7 +17,12 @@ public class CardMapper {
       return null;
     }
     return new CardResponseDTO(
-        card.getId(), card.getUserId(), card.getNumber(), card.getHolder(), card.getDateEx());
+        card.getId(),
+        card.getUser_id(),
+        card.getNumber(),
+        card.getHolder(),
+        card.getExpiration_date(),
+        card.isActive());
   }
 
   public List<CardResponseDTO> toDTOs(List<Card> cards) {
@@ -30,10 +35,11 @@ public class CardMapper {
     }
     Card card = new Card();
     card.setId(cardRequestDTO.getId());
-    card.setUserId(cardRequestDTO.getUserId());
+    card.setUser_id(cardRequestDTO.getUser_id());
     card.setNumber(cardRequestDTO.getNumber());
     card.setHolder(cardRequestDTO.getHolder());
-    card.setDateEx(cardRequestDTO.getDateEx());
+    card.setExpiration_date(cardRequestDTO.getExpiration_date());
+    card.setActive(cardRequestDTO.isActive());
     return card;
   }
 

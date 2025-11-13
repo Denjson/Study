@@ -59,7 +59,7 @@ class UserControllerTest extends AbstractIntegrationTest {
   void createUserTest() {
     String payload =
 """
-{"name":"Y","surname":"WomanY", "date":"2022-02-16T10:22:15", "email":"you33@and.me"}
+{"name":"Y","surname":"WomanY", "date":"2022-02-16T10:22:15", "email":"you33@and.me", "active":"true"}
         """;
 
     Response responseController =
@@ -81,8 +81,8 @@ class UserControllerTest extends AbstractIntegrationTest {
   void createUsersTest() {
     String payload =
 """
-[{"name":"XXX","surname":"ManX", "date":"2022-02-16T10:22:15", "email":"come11@with.me"},
-{"name":"ZZZ","surname":"WomanZ", "date":"2022-02-16T10:22:15", "email":"zoomer@lonely.you"}]
+[{"name":"XXX","surname":"ManX", "date":"2022-02-16T10:22:15", "email":"come11@with.me", "active":"true"},
+{"name":"ZZZ","surname":"WomanZ", "date":"2022-02-16T10:22:15", "email":"zoomer@lonely.you", "active":"true"}]
         """;
 
     Response responseController =
@@ -161,7 +161,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     String payload =
 """
-{"name":"Y","surname":"WomanY", "date":"2022-02-16T10:22:15", "email":"you33@and.me"}
+{"name":"Y","surname":"WomanY", "date":"2022-02-16T10:22:15", "email":"you33@and.me", "active":"true"}
         """;
 
     Response responseController =
@@ -250,8 +250,8 @@ class UserControllerTest extends AbstractIntegrationTest {
   void getAllUsersTest() {
     List<User> users =
         List.of(
-            new User(null, "John", "Connor", LocalDateTime.now(), "john@mail.com"),
-            new User(null, "Dennis", "Nix", LocalDateTime.now(), "dennis@mail.com"));
+            new User(null, "John", "Connor", LocalDateTime.now(), "john@mail.com", true),
+            new User(null, "Dennis", "Nix", LocalDateTime.now(), "dennis@mail.com", true));
     userRepository.saveAll(users);
     assertTrue(userService.getAllUsers().size() == 2);
     Response responseController =
@@ -320,7 +320,8 @@ class UserControllerTest extends AbstractIntegrationTest {
 
   @Test
   void testDeleteUser() {
-    User userToDel = new User(null, "John", "Connor", LocalDateTime.now(), "tomjohn@mail.com");
+    User userToDel =
+        new User(null, "John", "Connor", LocalDateTime.now(), "tomjohn@mail.com", true);
     userRepository.save(userToDel);
     assertNotNull(userService.getById(userToDel.getId()));
     userService.deleteById(userToDel.getId());

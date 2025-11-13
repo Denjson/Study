@@ -17,7 +17,12 @@ public class UserMapper {
       return null;
     }
     return new UserResponseDTO(
-        user.getId(), user.getName(), user.getSurname(), user.getDate(), user.getEmail());
+        user.getId(),
+        user.getName(),
+        user.getSurname(),
+        user.getBirth_date(),
+        user.getEmail(),
+        user.isActive());
   }
 
   public List<UserResponseDTO> toDTOs(List<User> users) {
@@ -32,8 +37,9 @@ public class UserMapper {
     user.setId(userRequestDto.getId());
     user.setName(userRequestDto.getName());
     user.setSurname(userRequestDto.getSurname());
-    user.setDate(userRequestDto.getDate());
+    user.setBirth_date(userRequestDto.getBirth_date());
     user.setEmail(userRequestDto.getEmail());
+    user.setActive(userRequestDto.isActive());
     return user;
   }
 

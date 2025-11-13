@@ -20,6 +20,7 @@
            <column  name="number"  type="int"/>
            <column  name="holder"  type="varchar(15)"/>
            <column  name="expiration_date"  type="date"/>
+           <column  name="active"  type="BOOLEAN"/>
   	    <column  name="email"  type="varchar(20)"/> 
         </createTable> 
     </changeSet>  
