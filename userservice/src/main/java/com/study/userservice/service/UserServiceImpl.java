@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -15,6 +17,7 @@ import com.study.userservice.dto.UserRequestDTO;
 import com.study.userservice.dto.UserResponseDTO;
 import com.study.userservice.entity.User;
 import com.study.userservice.entity.UserHistory;
+import com.study.userservice.exceptions.DuplicatedValueException;
 import com.study.userservice.exceptions.IdNotFoundException;
 import com.study.userservice.mappers.UserMapper;
 import com.study.userservice.repository.UserHistoryRepository;
@@ -38,15 +41,28 @@ public class UserServiceImpl implements UserService {
 
   @CacheEvict(value = "users", key = "0")
   public UserResponseDTO saveOne(UserRequestDTO userRequestDTO) {
+    if (userRepository.getByEmail(userRequestDTO.getEmail()).isPresent()) {
+      throw new DuplicatedValueException(
+          "User with e-mail is already existing: " + userRequestDTO.getEmail());
+    }
     User user = userRepository.save(userMapper.toEntity(userRequestDTO));
     System.out.println("Saved User: " + userRequestDTO);
     return userMapper.toDTO(user);
   }
 
   @CacheEvict(value = "users", key = "0")
-  public List<UserResponseDTO> saveMany(List<UserRequestDTO> UserRequestDTOs) {
-    List<User> manyUsers = userRepository.saveAll(userMapper.manyToEntity(UserRequestDTOs));
-    System.out.println("Saved Users: " + UserRequestDTOs);
+  public List<UserResponseDTO> saveMany(List<UserRequestDTO> userRequestDTOs) {
+    List<String> emails =
+        userRequestDTOs.stream().map(UserRequestDTO::getEmail).collect(Collectors.toList());
+    //    Set<String> set = new HashSet<>(emails);
+    //    userRepository.findByEmailIn(set);
+    for (String email : emails) {
+      if (userRepository.getByEmail(email).isPresent()) {
+        throw new DuplicatedValueException("User with e-mail is already existing: " + email);
+      }
+    }
+    List<User> manyUsers = userRepository.saveAll(userMapper.manyToEntity(userRequestDTOs));
+    System.out.println("Saved Users: " + userRequestDTOs);
     return userMapper.toDTOs(manyUsers);
   }
 
@@ -94,6 +110,12 @@ public class UserServiceImpl implements UserService {
   @CachePut(value = "users", key = "#id")
   @CacheEvict(value = "users", key = "0")
   public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO) {
+    Optional<User> u = userRepository.getByEmail(userRequestDTO.getEmail());
+    if (u.isPresent() && (u.get().getId() != id)) {
+      throw new DuplicatedValueException(
+          "User with e-mail is already existing: " + userRequestDTO.getEmail());
+    }
+
     User user =
         userRepository
             .findById(id)
@@ -145,7 +167,7 @@ public class UserServiceImpl implements UserService {
     User u = new User();
     u.setName("X CODE");
     u.setSurname("MANCODE");
-    u.setBirth_date(LocalDateTime.now());
+    u.setBirthDate(LocalDateTime.now());
     u.setEmail((int) (Math.random() * 10000) + "@me.com");
     u.setActive(true);
     userRepository.save(u);
@@ -185,7 +207,6 @@ public class UserServiceImpl implements UserService {
   public List<UserHistory> getUserLog() {
     List<UserHistory> log = userHistoryRepository.findAll();
     System.out.println("All users within range: " + log.toString());
-    //    List<UserResponseDTO> userResponseDTOs = userMapper.toDTOs(users);
     return log;
   }
 }

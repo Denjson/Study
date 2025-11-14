@@ -27,8 +27,23 @@
                 <constraints  nullable="false"/>  
             </column>  
             <column  name="birth_date"  type="date"/>
-  	    <column  name="email"  type="varchar(20)"/> 
+  	    <column  name="email"  type="varchar(25)">
+  	    	<constraints  nullable="false"/>  
+  	    </column>  
   	    <column  name="active"  type="BOOLEAN"/>
         </createTable> 
     </changeSet>  
+    
+    <!-- adding unique constraint on column "email" -->
+      <changeSet  id="3"  author="denrod" >
+    <addUniqueConstraint  
+            columnNames="email"
+            constraintName="const_unique"
+            deferrable="true"
+            disabled="true"
+            initiallyDeferred="true"
+            schemaName="den_schema"
+            tableName="users"
+            validate="true"/>
+  </changeSet>
 </databaseChangeLog>

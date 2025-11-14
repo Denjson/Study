@@ -18,6 +18,7 @@ import com.study.userservice.dto.CardResponseDTO;
 import com.study.userservice.dto.UserResponseDTO;
 import com.study.userservice.entity.Card;
 import com.study.userservice.entity.User;
+import com.study.userservice.exceptions.CardQuantityLimitException;
 import com.study.userservice.exceptions.DuplicatedValueException;
 import com.study.userservice.exceptions.IdNotFoundException;
 import com.study.userservice.mappers.CardMapper;
@@ -42,14 +43,18 @@ public class CardServiceImpl implements CardService {
   @CacheEvict(value = "cards", key = "0")
   public CardResponseDTO saveOne(CardRequestDTO cardRequestDTO) {
     userRepository
-        .findById(cardRequestDTO.getUser_id())
+        .findById(cardRequestDTO.getUserId())
         .orElseThrow(
-            () ->
-                new IdNotFoundException("User not found with id: " + cardRequestDTO.getUser_id()));
+            () -> new IdNotFoundException("User not found with id: " + cardRequestDTO.getUserId()));
     if (cardRepository.getByNumber(cardRequestDTO.getNumber()).isPresent()) {
       throw new DuplicatedValueException(
           "Card number is duplicated: " + cardRequestDTO.getNumber());
     }
+    Optional<List<Card>> cards = cardRepository.findByUserId(cardRequestDTO.getUserId());
+    if (cards.get().size() > 4) {
+      throw new CardQuantityLimitException("User is not allowed to have more than 5 cards");
+    }
+
     Card card = cardRepository.save(cardMapper.toEntity(cardRequestDTO));
     System.out.println("User found. Card added: " + cardRequestDTO.toString());
     return cardMapper.toDTO(card);
@@ -58,7 +63,7 @@ public class CardServiceImpl implements CardService {
   @CacheEvict(value = "cards", key = "0")
   public List<CardResponseDTO> saveMany(List<CardRequestDTO> cardRequestDTOs) {
     List<Card> cards = cardMapper.manyToEntity(cardRequestDTOs);
-    Set<Long> usersFromCards = cards.stream().map(Card::getUser_id).collect(Collectors.toSet());
+    Set<Long> usersFromCards = cards.stream().map(Card::getUserId).collect(Collectors.toSet());
     Optional<List<User>> usersFound = userRepository.findByIdIn(usersFromCards);
     if (usersFound.get().isEmpty()) {
       throw new IdNotFoundException("Users not found with ids: " + usersFromCards);
@@ -127,22 +132,22 @@ public class CardServiceImpl implements CardService {
   @CachePut(value = "cards", key = "#id")
   @CacheEvict(value = "cards", key = "0")
   public CardResponseDTO updateCard(Long id, CardRequestDTO cardDetails) {
-    Optional<User> userOptional = userRepository.findById(cardDetails.getUser_id());
+    Optional<User> userOptional = userRepository.findById(cardDetails.getUserId());
     Card card =
         cardRepository
             .findById(id)
             .orElseThrow(() -> new IdNotFoundException("Card not found with id: " + id));
     if (userOptional.isPresent()) {
-      card.setUser_id(cardDetails.getUser_id());
+      card.setUserId(cardDetails.getUserId());
       card.setHolder(userOptional.get().getName());
       card.setNumber(cardDetails.getNumber());
-      card.setExpiration_date(cardDetails.getExpiration_date());
+      card.setExpirationDate(cardDetails.getExpirationDate());
       card.setActive(cardDetails.isActive());
       cardRepository.save(card);
       System.out.println("Card updated: " + card.toString());
     } else {
-      System.out.println("User with ID " + cardDetails.getUser_id() + " not found.");
-      throw new IdNotFoundException("User not found with id: " + cardDetails.getUser_id());
+      System.out.println("User with ID " + cardDetails.getUserId() + " not found.");
+      throw new IdNotFoundException("User not found with id: " + cardDetails.getUserId());
     }
     return cardMapper.toDTO(card);
   }
@@ -150,10 +155,10 @@ public class CardServiceImpl implements CardService {
   @CacheEvict(value = "cards", key = "0")
   public CardResponseDTO addRandomCard(UserResponseDTO userResponseDto) {
     Card card = new Card();
-    card.setUser_id(userResponseDto.getId());
-    card.setNumber((int) (Math.random() * 10000000) + 1000000);
+    card.setUserId(userResponseDto.getId());
+    card.setNumber((long) (Math.random() * 10000000) + 1000000);
     card.setHolder(userResponseDto.getName());
-    card.setExpiration_date(LocalDateTime.now());
+    card.setExpirationDate(LocalDateTime.now());
     card.setActive(userResponseDto.isActive());
     System.out.println("From UserService - Card added to Random user: " + card.toString());
     cardRepository.save(card);

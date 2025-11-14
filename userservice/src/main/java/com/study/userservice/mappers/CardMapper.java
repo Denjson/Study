@@ -18,10 +18,10 @@ public class CardMapper {
     }
     return new CardResponseDTO(
         card.getId(),
-        card.getUser_id(),
+        card.getUserId(),
         card.getNumber(),
         card.getHolder(),
-        card.getExpiration_date(),
+        card.getExpirationDate(),
         card.isActive());
   }
 
@@ -35,10 +35,10 @@ public class CardMapper {
     }
     Card card = new Card();
     card.setId(cardRequestDTO.getId());
-    card.setUser_id(cardRequestDTO.getUser_id());
+    card.setUserId(cardRequestDTO.getUserId());
     card.setNumber(cardRequestDTO.getNumber());
     card.setHolder(cardRequestDTO.getHolder());
-    card.setExpiration_date(cardRequestDTO.getExpiration_date());
+    card.setExpirationDate(cardRequestDTO.getExpirationDate());
     card.setActive(cardRequestDTO.isActive());
     return card;
   }

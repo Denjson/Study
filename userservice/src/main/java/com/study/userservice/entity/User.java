@@ -35,7 +35,7 @@ public class User {
   private String surname;
 
   @Column(name = "birth_date")
-  private LocalDateTime birth_date;
+  private LocalDateTime birthDate;
 
   @Column(name = "email", nullable = false, unique = true)
   private String email;
