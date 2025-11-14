@@ -19,7 +19,7 @@
     
     <changeSet  id="2"  author="denrod" >
         <createTable  tableName="users" schemaName="den_schema">  
-            <column  name="id"  type="int"  autoIncrement="true">  
+            <column  name="id"  type="bigint"  autoIncrement="true">  
                 <constraints  primaryKey="true"  nullable="false"/>
              </column>  
             <column  name="name"  type="varchar(15)"/>  

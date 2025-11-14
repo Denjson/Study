@@ -1,5 +1,6 @@
 package com.study.userservice.mappers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,11 @@ public class CardMapper {
     card.setNumber(cardRequestDTO.getNumber());
     card.setHolder(cardRequestDTO.getHolder());
     card.setExpirationDate(cardRequestDTO.getExpirationDate());
-    card.setActive(cardRequestDTO.isActive());
+    if (cardRequestDTO.getExpirationDate().compareTo(LocalDateTime.now()) > 0) {
+      card.setActive(cardRequestDTO.isActive());
+    } else {
+      card.setActive(!cardRequestDTO.isActive());
+    }
     return card;
   }
 

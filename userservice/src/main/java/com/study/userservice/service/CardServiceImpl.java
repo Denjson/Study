@@ -42,6 +42,13 @@ public class CardServiceImpl implements CardService {
 
   @CacheEvict(value = "cards", key = "0")
   public CardResponseDTO saveOne(CardRequestDTO cardRequestDTO) {
+    checkCard(cardRequestDTO);
+    Card card = cardRepository.save(cardMapper.toEntity(cardRequestDTO));
+    System.out.println("User found. Card added: " + cardRequestDTO.toString());
+    return cardMapper.toDTO(card);
+  }
+
+  public void checkCard(CardRequestDTO cardRequestDTO) {
     userRepository
         .findById(cardRequestDTO.getUserId())
         .orElseThrow(
@@ -52,16 +59,15 @@ public class CardServiceImpl implements CardService {
     }
     Optional<List<Card>> cards = cardRepository.findByUserId(cardRequestDTO.getUserId());
     if (cards.get().size() > 4) {
-      throw new CardQuantityLimitException("User is not allowed to have more than 5 cards");
+      throw new CardQuantityLimitException("Users are not allowed to have more than 5 cards");
     }
-
-    Card card = cardRepository.save(cardMapper.toEntity(cardRequestDTO));
-    System.out.println("User found. Card added: " + cardRequestDTO.toString());
-    return cardMapper.toDTO(card);
   }
 
   @CacheEvict(value = "cards", key = "0")
   public List<CardResponseDTO> saveMany(List<CardRequestDTO> cardRequestDTOs) {
+    for (CardRequestDTO cardRequestDTO : cardRequestDTOs) {
+      checkCard(cardRequestDTO);
+    }
     List<Card> cards = cardMapper.manyToEntity(cardRequestDTOs);
     Set<Long> usersFromCards = cards.stream().map(Card::getUserId).collect(Collectors.toSet());
     Optional<List<User>> usersFound = userRepository.findByIdIn(usersFromCards);
@@ -105,6 +111,14 @@ public class CardServiceImpl implements CardService {
     return cardResponseDTOs;
   }
 
+  public List<CardResponseDTO> getByUserId(Long id) {
+    List<Card> cards = cardRepository.findByUserId(id).get();
+    if (cards.size() == 0) {
+      throw new IdNotFoundException("User not found with id: " + id);
+    }
+    return cardMapper.toDTOs(cards);
+  }
+
   @Caching(
       evict = {@CacheEvict(value = "cards", key = "#id"), @CacheEvict(value = "cards", key = "0")})
   public CardResponseDTO deleteById(Long id) {
@@ -142,7 +156,11 @@ public class CardServiceImpl implements CardService {
       card.setHolder(userOptional.get().getName());
       card.setNumber(cardDetails.getNumber());
       card.setExpirationDate(cardDetails.getExpirationDate());
-      card.setActive(cardDetails.isActive());
+      if (cardDetails.getExpirationDate().compareTo(LocalDateTime.now()) > 0) {
+        card.setActive(cardDetails.isActive());
+      } else {
+        card.setActive(!cardDetails.isActive());
+      }
       cardRepository.save(card);
       System.out.println("Card updated: " + card.toString());
     } else {
@@ -158,7 +176,7 @@ public class CardServiceImpl implements CardService {
     card.setUserId(userResponseDto.getId());
     card.setNumber((long) (Math.random() * 10000000) + 1000000);
     card.setHolder(userResponseDto.getName());
-    card.setExpirationDate(LocalDateTime.now());
+    card.setExpirationDate(LocalDateTime.now().plusYears(2));
     card.setActive(userResponseDto.isActive());
     System.out.println("From UserService - Card added to Random user: " + card.toString());
     cardRepository.save(card);

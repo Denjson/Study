@@ -270,7 +270,7 @@ class CardControllerTest extends AbstractIntegrationTest {
   }
 
   @Test
-  void testDeleteCustomer() {
+  void deleteCustomerTest() {
     User userToDel =
         new User(null, "John", "Connor", LocalDateTime.now(), "tomjohn@mail.com", true);
     userRepository.save(userToDel);
@@ -279,6 +279,12 @@ class CardControllerTest extends AbstractIntegrationTest {
     assertNotNull(cardService.getById(id));
     cardService.deleteById(id);
     assertThrows(IdNotFoundException.class, () -> cardService.getById(userToDel.getId()));
+    printCurrentMethodName();
+  }
+
+  @Test
+  void getByUserIdTest() {
+    assertThrows(IdNotFoundException.class, () -> cardService.getByUserId(404404L));
     printCurrentMethodName();
   }
 
