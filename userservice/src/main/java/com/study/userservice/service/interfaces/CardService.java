@@ -26,4 +26,6 @@ public interface CardService {
   public CardResponseDTO delCardLast();
 
   public CardResponseDTO addRandomCard(UserResponseDTO u);
+
+  public List<CardResponseDTO> getByUserId(Long id);
 }

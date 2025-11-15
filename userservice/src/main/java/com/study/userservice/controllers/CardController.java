@@ -87,4 +87,10 @@ public class CardController {
     CardResponseDTO cardResponseDTO = cardService.delCardLast();
     return ResponseEntity.ok(cardResponseDTO);
   }
+
+  @GetMapping(path = "/card/user/{id}")
+  public ResponseEntity<List<CardResponseDTO>> getCardsByUserId(@PathVariable Long id) {
+    List<CardResponseDTO> cardResponseDTOs = cardService.getByUserId(id);
+    return ResponseEntity.ok(cardResponseDTOs);
+  }
 }

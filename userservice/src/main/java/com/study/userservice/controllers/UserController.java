@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.study.userservice.auditing.UserHistory;
 import com.study.userservice.dto.UserRequestDTO;
 import com.study.userservice.dto.UserResponseDTO;
+import com.study.userservice.entity.UserHistory;
 import com.study.userservice.service.interfaces.UserService;
 
 @RestController

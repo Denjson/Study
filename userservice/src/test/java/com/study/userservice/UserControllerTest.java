@@ -59,7 +59,7 @@ class UserControllerTest extends AbstractIntegrationTest {
   void createUserTest() {
     String payload =
 """
-{"name":"Y","surname":"WomanY", "date":"2022-02-16T10:22:15", "email":"you33@and.me", "active":"true"}
+{"name":"Y","surname":"WomanY", "birthDate":"2022-02-16T10:22:15", "email":"you33@and.me", "active":"true"}
         """;
 
     Response responseController =
@@ -81,8 +81,8 @@ class UserControllerTest extends AbstractIntegrationTest {
   void createUsersTest() {
     String payload =
 """
-[{"name":"XXX","surname":"ManX", "date":"2022-02-16T10:22:15", "email":"come11@with.me", "active":"true"},
-{"name":"ZZZ","surname":"WomanZ", "date":"2022-02-16T10:22:15", "email":"zoomer@lonely.you", "active":"true"}]
+[{"name":"XXX","surname":"ManX", "birthDate":"2022-02-16T10:22:15", "email":"come11@with.me", "active":"true"},
+{"name":"ZZZ","surname":"WomanZ", "birthDate":"2022-02-16T10:22:15", "email":"zoomer@lonely.you", "active":"true"}]
         """;
 
     Response responseController =
@@ -161,7 +161,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     String payload =
 """
-{"name":"Y","surname":"WomanY", "date":"2022-02-16T10:22:15", "email":"you33@and.me", "active":"true"}
+{"name":"Y","surname":"WomanY", "birthDate":"2022-02-16T10:22:15", "email":"you33@and.me", "active":"true"}
         """;
 
     Response responseController =

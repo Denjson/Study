@@ -13,11 +13,11 @@
 
     <changeSet  id="1"  author="denrod">
         <createTable  tableName="card_info" schemaName="den_schema">  
-           <column  name="id"  type="int"  autoIncrement="true">  
+           <column  name="id"  type="bigint"  autoIncrement="true">  
                <constraints  primaryKey="true"  nullable="false"/>
            </column>
-           <column  name="user_id"  type="int"/>
-           <column  name="number"  type="int"/>
+           <column  name="user_id"  type="bigint"/>
+           <column  name="number"  type="bigint"/>
            <column  name="holder"  type="varchar(15)"/>
            <column  name="expiration_date"  type="date"/>
            <column  name="active"  type="BOOLEAN"/>
