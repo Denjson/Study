@@ -30,6 +30,9 @@ jobs:
     - name: Build with Maven
       working-directory: ./userservice
       run: mvn -B package --file pom.xml
+    - name: Maven plugin
+      working-directory: ./userservice
+      run: mvn com.github.ferstl:depgraph-maven-plugin:4.0.1:graph
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
