@@ -50,8 +50,8 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: build image
       run: |
-        docker build ./userservice/ -t denjson/denrepo:latest
+        docker build ./userservice/ -t denrod/denrepo:latest
     - name: push image to docker hub
       run: |
-        docker login -u denjson -p ${{ secrets.DOCKER_HUB_TOKEN }}
-        docker push denjson/denrepo:latest
+        docker login -u denrod -p ${{ secrets.DOCKER_HUB_TOKEN }}
+        docker push denrod/denrepo:latest
