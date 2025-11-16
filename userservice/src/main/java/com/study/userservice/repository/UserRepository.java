@@ -20,6 +20,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Optional<List<User>> findByIdIn(Set<Long> ids);
 
+  Optional<List<User>> findByEmailIn(Set<String> email);
+
   @Query(value = "SELECT * FROM den_schema.users WHERE id > :n", nativeQuery = true)
   List<User> findIdsNative(Integer n);
 

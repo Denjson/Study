@@ -85,7 +85,7 @@ class CardControllerTest extends AbstractIntegrationTest {
   void createCardTest() {
     String payload =
 """
-{"user_id":currentUserId,"number":"123456789","holder":"CardHolder","expiration_date":"2022-02-16T10:22:15","active":"true"}
+{"userId":currentUserId,"number":"123456789","holder":"CardHolder","expirationDate":"2022-02-16T10:22:15","active":"true"}
         """;
 
     payload = payload.replace("currentUserId", "" + userId);
@@ -109,8 +109,8 @@ class CardControllerTest extends AbstractIntegrationTest {
   void createCardsTest() {
     String payload =
         """
-  [{"user_id":currentUserId,"number":"111111","holder":"CardHolder","expiration_date":"2022-02-16T10:22:15","active":"true"},
-  {"user_id":currentUserId,"number":"222222","holder":"CardHolder","expiration_date":"2022-02-16T10:22:15","active":"true"}]
+  [{"userId":currentUserId,"number":"111111","holder":"CardHolder","expirationDate":"2022-02-16T10:22:15","active":"true"},
+  {"userId":currentUserId,"number":"222222","holder":"CardHolder","expirationDate":"2022-02-16T10:22:15","active":"true"}]
           """;
     payload = payload.replace("currentUserId", "" + userId);
 
@@ -175,7 +175,7 @@ class CardControllerTest extends AbstractIntegrationTest {
 
     String payload =
         """
-  {"user_id":currentUserId,"number":"987654","holder":"CannotChangeCardHolder","expiration_date":"2022-02-16T10:22:15","active":"true"}
+  {"userId":currentUserId,"number":"987654","holder":"CannotChangeCardHolder","expirationDate":"2022-02-16T10:22:15","active":"true"}
           """;
     payload = payload.replace("currentUserId", "" + userId);
 
@@ -270,7 +270,7 @@ class CardControllerTest extends AbstractIntegrationTest {
   }
 
   @Test
-  void testDeleteCustomer() {
+  void deleteCustomerTest() {
     User userToDel =
         new User(null, "John", "Connor", LocalDateTime.now(), "tomjohn@mail.com", true);
     userRepository.save(userToDel);
@@ -279,6 +279,12 @@ class CardControllerTest extends AbstractIntegrationTest {
     assertNotNull(cardService.getById(id));
     cardService.deleteById(id);
     assertThrows(IdNotFoundException.class, () -> cardService.getById(userToDel.getId()));
+    printCurrentMethodName();
+  }
+
+  @Test
+  void getByUserIdTest() {
+    assertThrows(IdNotFoundException.class, () -> cardService.getByUserId(404404L));
     printCurrentMethodName();
   }
 
