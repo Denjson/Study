@@ -46,8 +46,8 @@ jobs:
 
     - name: build image
       run: |
-        docker build ./userservice/ -t denrod/denrepo:latest
+        docker build ./userservice/ -t denrod/denrepo:fromgit
     - name: push image to docker hub
       run: |
         docker login -u denrod -p ${{ secrets.DOCKER_HUB_TOKEN }}
-        docker push denrod/denrepo:latest
+        docker push denrod/denrepo:fromgit
