@@ -13,6 +13,8 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+    paths:
+      - 'userservice/Dockerfile'
 
 jobs:
   build:
@@ -39,3 +41,12 @@ jobs:
       working-directory: ./userservice
       run: mvn com.github.ferstl:depgraph-maven-plugin:4.0.1:graph -DgraphFormat=json
 
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: build image
+      run: |
+        docker build ./userservice/ -t denjson/denrepo:latest
+    - name: push image to docker hub
+      run: |
+        docker login -u denjson -p ${{ secrets.DOCKER_HUB_TOKEN }}
+        docker push denjson/denrepo:latest
